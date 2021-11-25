@@ -12,7 +12,7 @@ def get_ad(chat_id: int) -> Union[List[int], bool]:
     return False
 
 
-async def get_adminis(chat: Chat) -> List[User]:
+async def get_admins(chat: Chat) -> List[User]:
     get = get_ad(chat.id)
     if get:
         return get
