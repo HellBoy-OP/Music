@@ -1,0 +1,54 @@
+{
+    "name": "HellBot Music",
+    "logo": "https://",
+    "description": "A telegram voice chat music player officially from The HellBot.",
+    "keywords": ["music", "voice chat", "telegram", "pyrogram", "pytgcalls", "hellbot"],
+    "repository": "https://github.com/HellBoy-OP/Music",
+    "stack": "container",
+    "env": {
+        "HELLBOT_SESSION": {
+            "description": "Paste pyrogram string session."
+        },
+        "BOT_TOKEN": {
+            "description": "Paste the bot token from @Botfather"
+        },
+        "LOGGER_ID": {
+            "description": "A private channel/group id starting with -100"
+        },
+        "OWNER": {
+            "description": "User Id of the owner."
+        },
+        "BOT_USERNAME": {
+            "description": "Give your bot username without '@'"
+        },
+        "ASSISTANT": {
+            "description": "Music assistant's username without '@'"
+        },
+        "OWNER_NAME": {
+            "description": "Username of the owner without '@'"
+        },
+        "API_ID": {
+            "description": "Fill your api id from my.telegram.org"
+        },
+        "API_HASH": {
+            "description": "Fill your api hash from my.telegram.org"
+        },
+        "SUDO_USERS": {
+            "description": "User id of some user(s) you want to give sudo access. Separate each userid with a space."
+        },
+        "DURATION_LIMIT": {
+            "description": "Maximum duration in minutes to download music. Default is '60'"
+        },
+        "DATABASE_URL": {
+            "description": "Get a mongo db url and paste it here."
+        }
+    },
+    "buildpacks": [
+    {
+      "url": "https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest.git"
+    },
+    {
+      "url": "heroku/python"
+    }
+  ]
+}
