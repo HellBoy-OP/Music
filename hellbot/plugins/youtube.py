@@ -7,10 +7,12 @@ from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from youtubesearchpython import SearchVideos
 from youtube_search import YoutubeSearch
 
+from ..helper.database.db import get_collections
+from ..helper.miscs import clog
 from ..config import BOT_USERNAME as BUN
 from ..helper.miscs import paste, capture_err
 
-
+GROUPS = get_collections("GROUPS")
 is_downloading = False
 
 def humanbytes(size):
@@ -77,6 +79,15 @@ async def progress(current, total, message, start, type_of_ps, file_name=None):
 
 @Client.on_message(filters.command(['song', f'song@{BUN}']))
 async def song(client, message):
+    gid = message.chat.id
+    gidtype = message.chat.type
+    if gidtype in ["supergroup", "group"] and not await (GROUPS.find_one({"id": gid})):
+        try:
+            gidtitle = message.chat.username
+        except KeyError:
+            gidtitle = message.chat.title
+        await GROUPS.insert_one({"id": gid, "grp": gidtitle})
+        await clog("HELLBOT_MUSIC", f"Bot added to a new group\n\n{gidtitle}\nID: `{gid}`", "NEW_GROUP")
     user_ = f"[{message.from_user.first_name}](tg://user?id={message.from_user.id})"
     qry = message.text
     query = qry.split(" ", 1)
@@ -124,6 +135,15 @@ async def song(client, message):
 
 @Client.on_message(filters.command(["lyrics", f"lyrics@{BUN}"]))
 async def lyrics_func(_, message):
+    gid = message.chat.id
+    gidtype = message.chat.type
+    if gidtype in ["supergroup", "group"] and not await (GROUPS.find_one({"id": gid})):
+        try:
+            gidtitle = message.chat.username
+        except KeyError:
+            gidtitle = message.chat.title
+        await GROUPS.insert_one({"id": gid, "grp": gidtitle})
+        await clog("HELLBOT_MUSIC", f"Bot added to a new group\n\n{gidtitle}\nID: `{gid}`", "NEW_GROUP")
     qry = message.text
     query = qry.split(" ", 1)
     if len(query) == 1:
@@ -141,6 +161,15 @@ async def lyrics_func(_, message):
 
 @Client.on_message(filters.command(["video", "vsong", f"video@{BUN}", f"vsong@{BUN}"]))
 async def ytmusic(client, message: Message):
+    gid = message.chat.id
+    gidtype = message.chat.type
+    if gidtype in ["supergroup", "group"] and not await (GROUPS.find_one({"id": gid})):
+        try:
+            gidtitle = message.chat.username
+        except KeyError:
+            gidtitle = message.chat.title
+        await GROUPS.insert_one({"id": gid, "grp": gidtitle})
+        await clog("HELLBOT_MUSIC", f"Bot added to a new group\n\n{gidtitle}\nID: `{gid}`", "NEW_GROUP")
     qry = message.text
     query = qry.split(" ", 1)
     global is_downloading
