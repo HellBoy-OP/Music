@@ -2,6 +2,8 @@ import datetime
 import motor.motor_asyncio
 
 from motor.motor_asyncio import AsyncIOMotorClient as MongoClient
+from motor.core import AgnosticClient, AgnosticDatabase, AgnosticCollection
+
 from hellbot.config import DB_URI, BOT_USERNAME
 
 
@@ -77,3 +79,7 @@ class Database:
 db = Database(DB_URI, BOT_USERNAME)
 mdb = MongoClient(DB_URI)
 mdb_ = mdb.handlers
+
+
+def get_collections(name: str) -> AgnosticCollection:
+    return db[name]
