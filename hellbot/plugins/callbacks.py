@@ -1,7 +1,7 @@
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, Chat, CallbackQuery
 
-from ..helper.pycalls import client as USER
+from .. import client as USER
 from ..config import BOT_USERNAME as BUN, OWNER
 
 
