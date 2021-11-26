@@ -9,6 +9,7 @@ from pyrogram.errors.exceptions.forbidden_403 import ChatWriteForbidden
 from pyrogram.types import Message
 
 from ..config import LOGGER_ID
+from .. import hellbot
 
 
 def get_file_id(msg: Message):
@@ -112,3 +113,8 @@ def fetch_heroku_git_url(api_key, app_name):
     if not heroku_app:
         return None
     return heroku_app.git_url.replace("https://", "https://api:" + api_key + "@")
+
+
+async def clog(name: str, text: str, tag: str):
+    log = f"#{name.upper()}  #{tag.upper()}\n\n{text}"
+    await hellbot.send_message(chat_id=LOGGER_ID, text=log)
