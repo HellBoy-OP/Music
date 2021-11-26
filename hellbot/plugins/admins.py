@@ -8,11 +8,13 @@ from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, 
 from ..helper import pycalls, queue
 from ..helper.filters import command
 from ..helper.decorators import errors, authorized_users_only
-from ..helper.database.db import db, mdb_, Database
+from ..helper.database.db import db, mdb_, Database, get_collections
 from ..helper.database.dbhelpers import handle_user_status, delcmd_is_on, delcmd_on, delcmd_off
+from ..helper.miscs import clog
 from ..config import BOT_USERNAME as BUN
 from . import que, admins as admins_dict
 
+GROUPS = get_collections("GROUPS")
 
 @Client.on_message()
 async def _(bot: Client, cmd: Message):
@@ -32,6 +34,15 @@ async def delcmd(_, message: Message):
 @Client.on_message(filters.command(["reload", "admincache", f"reload@{BUN}", f"admincache@{BUN}"]))
 @authorized_users_only
 async def update_admin(client, message):
+    gid = message.chat.id
+    gidtype = message.chat.type
+    if gidtype in ["supergroup", "group"] and not await (GROUPS.find_one({"id": gid})):
+        try:
+            gidtitle = message.chat.username
+        except KeyError:
+            gidtitle = message.chat.title
+        await GROUPS.insert_one({"id": gid, "grp": gidtitle})
+        await clog("HELLBOT_MUSIC", f"Bot added to a new group\n\n{gidtitle}\nID: `{gid}`", "NEW_GROUP")
     global admins_dict
     admins = await client.get_chat_members(message.chat.id, filter="administrators")
     new_ads = []
@@ -45,6 +56,15 @@ async def update_admin(client, message):
 @errors
 @authorized_users_only
 async def controlset(_, message: Message):
+    gid = message.chat.id
+    gidtype = message.chat.type
+    if gidtype in ["supergroup", "group"] and not await (GROUPS.find_one({"id": gid})):
+        try:
+            gidtitle = message.chat.username
+        except KeyError:
+            gidtitle = message.chat.title
+        await GROUPS.insert_one({"id": gid, "grp": gidtitle})
+        await clog("HELLBOT_MUSIC", f"Bot added to a new group\n\n{gidtitle}\nID: `{gid}`", "NEW_GROUP")
     await message.reply_text(
         "**🕹️ Control Panel :**",
         reply_markup=InlineKeyboardMarkup(
@@ -83,6 +103,15 @@ async def controlset(_, message: Message):
 @errors
 @authorized_users_only
 async def pause(_, message: Message):
+    gid = message.chat.id
+    gidtype = message.chat.type
+    if gidtype in ["supergroup", "group"] and not await (GROUPS.find_one({"id": gid})):
+        try:
+            gidtitle = message.chat.username
+        except KeyError:
+            gidtitle = message.chat.title
+        await GROUPS.insert_one({"id": gid, "grp": gidtitle})
+        await clog("HELLBOT_MUSIC", f"Bot added to a new group\n\n{gidtitle}\nID: `{gid}`", "NEW_GROUP")
     if pycalls.pause(message.chat.id):
         await message.reply_text(f"**⏸ Paused !!**")
     else:
@@ -93,6 +122,15 @@ async def pause(_, message: Message):
 @errors
 @authorized_users_only
 async def resume(_, message: Message):
+    gid = message.chat.id
+    gidtype = message.chat.type
+    if gidtype in ["supergroup", "group"] and not await (GROUPS.find_one({"id": gid})):
+        try:
+            gidtitle = message.chat.username
+        except KeyError:
+            gidtitle = message.chat.title
+        await GROUPS.insert_one({"id": gid, "grp": gidtitle})
+        await clog("HELLBOT_MUSIC", f"Bot added to a new group\n\n{gidtitle}\nID: `{gid}`", "NEW_GROUP")
     if pycalls.resume(message.chat.id):
         await message.reply_text(f"**🎧 Resumed !!**")
     else:
@@ -103,6 +141,15 @@ async def resume(_, message: Message):
 @errors
 @authorized_users_only
 async def stop(_, message: Message):
+    gid = message.chat.id
+    gidtype = message.chat.type
+    if gidtype in ["supergroup", "group"] and not await (GROUPS.find_one({"id": gid})):
+        try:
+            gidtitle = message.chat.username
+        except KeyError:
+            gidtitle = message.chat.title
+        await GROUPS.insert_one({"id": gid, "grp": gidtitle})
+        await clog("HELLBOT_MUSIC", f"Bot added to a new group\n\n{gidtitle}\nID: `{gid}`", "NEW_GROUP")
     if message.chat.id not in pycalls.active_chats:
         await message.reply_text("**❗ Not even playing!**")
     else:
@@ -118,6 +165,15 @@ async def stop(_, message: Message):
 @errors
 @authorized_users_only
 async def skip(_, message: Message):
+    gid = message.chat.id
+    gidtype = message.chat.type
+    if gidtype in ["supergroup", "group"] and not await (GROUPS.find_one({"id": gid})):
+        try:
+            gidtitle = message.chat.username
+        except KeyError:
+            gidtitle = message.chat.title
+        await GROUPS.insert_one({"id": gid, "grp": gidtitle})
+        await clog("HELLBOT_MUSIC", f"Bot added to a new group\n\n{gidtitle}\nID: `{gid}`", "NEW_GROUP")
     if message.chat.id not in pycalls.active_chats:
         await message.reply_text("**❗ Nothing is playing !!**")
     else:
@@ -135,6 +191,15 @@ async def skip(_, message: Message):
 @errors
 @authorized_users_only
 async def mute(_, message: Message):
+    gid = message.chat.id
+    gidtype = message.chat.type
+    if gidtype in ["supergroup", "group"] and not await (GROUPS.find_one({"id": gid})):
+        try:
+            gidtitle = message.chat.username
+        except KeyError:
+            gidtitle = message.chat.title
+        await GROUPS.insert_one({"id": gid, "grp": gidtitle})
+        await clog("HELLBOT_MUSIC", f"Bot added to a new group\n\n{gidtitle}\nID: `{gid}`", "NEW_GROUP")
     result = pycalls.mute(message.chat.id)
     if result == 0:
         await message.reply_text("🔇 **Muted !!**")
@@ -148,6 +213,15 @@ async def mute(_, message: Message):
 @errors
 @authorized_users_only
 async def unmute(_, message: Message):
+    gid = message.chat.id
+    gidtype = message.chat.type
+    if gidtype in ["supergroup", "group"] and not await (GROUPS.find_one({"id": gid})):
+        try:
+            gidtitle = message.chat.username
+        except KeyError:
+            gidtitle = message.chat.title
+        await GROUPS.insert_one({"id": gid, "grp": gidtitle})
+        await clog("HELLBOT_MUSIC", f"Bot added to a new group\n\n{gidtitle}\nID: `{gid}`", "NEW_GROUP")
     result = pycalls.unmute(message.chat.id)
     if result == 0:
         await message.reply_text("🔊 **Unmuted !!**")
@@ -224,6 +298,15 @@ async def cbunmute(_, query: CallbackQuery):
 @Client.on_message(command(["auth", f"auth@{BUN}"]))
 @authorized_users_only
 async def authenticate(client, message):
+    gid = message.chat.id
+    gidtype = message.chat.type
+    if gidtype in ["supergroup", "group"] and not await (GROUPS.find_one({"id": gid})):
+        try:
+            gidtitle = message.chat.username
+        except KeyError:
+            gidtitle = message.chat.title
+        await GROUPS.insert_one({"id": gid, "grp": gidtitle})
+        await clog("HELLBOT_MUSIC", f"Bot added to a new group\n\n{gidtitle}\nID: `{gid}`", "NEW_GROUP")
     global admins
     if not message.reply_to_message:
         return await message.reply("**Reply to a user to authorise them.**")
@@ -241,6 +324,15 @@ async def authenticate(client, message):
 @Client.on_message(command(["unauth", f"unauth@{BUN}"]))
 @authorized_users_only
 async def unautenticate(client, message):
+    gid = message.chat.id
+    gidtype = message.chat.type
+    if gidtype in ["supergroup", "group"] and not await (GROUPS.find_one({"id": gid})):
+        try:
+            gidtitle = message.chat.username
+        except KeyError:
+            gidtitle = message.chat.title
+        await GROUPS.insert_one({"id": gid, "grp": gidtitle})
+        await clog("HELLBOT_MUSIC", f"Bot added to a new group\n\n{gidtitle}\nID: `{gid}`", "NEW_GROUP")
     global admins
     if not message.reply_to_message:
         return await message.reply("Reply to a user to unauthorise them.")
@@ -257,6 +349,15 @@ async def unautenticate(client, message):
 @Client.on_message(filters.command(["delcmd", f"delcmd@{BUN}"]) & ~filters.private)
 @authorized_users_only
 async def delcmdc(_, message: Message):
+    gid = message.chat.id
+    gidtype = message.chat.type
+    if gidtype in ["supergroup", "group"] and not await (GROUPS.find_one({"id": gid})):
+        try:
+            gidtitle = message.chat.username
+        except KeyError:
+            gidtitle = message.chat.title
+        await GROUPS.insert_one({"id": gid, "grp": gidtitle})
+        await clog("HELLBOT_MUSIC", f"Bot added to a new group\n\n{gidtitle}\nID: `{gid}`", "NEW_GROUP")
     if len(message.command) != 2:
         await message.reply_text("**Unknown command!!** \n\n__Give 'on' or 'off' along with /delcmd__")
         return
