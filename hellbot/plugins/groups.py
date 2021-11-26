@@ -1,18 +1,30 @@
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
 from pyrogram.errors import UserAlreadyParticipant
+
+from ..helper.database.db import get_collections
 from ..helper.decorators import errors, authorized_users_only
+from ..helper.miscs import clog
 from .. import client as USER
 from ..config import BOT_USERNAME as BUN
 
+GROUPS = get_collections("GROUPS")
 
 @Client.on_message(filters.group & filters.command(["join", f"join@{BUN}"]))
 @authorized_users_only
 @errors
 async def addchannel(client, message):
-    chid = message.chat.id
+    gid = message.chat.id
+    gidtype = message.chat.type
+    if gidtype in ["supergroup", "group"] and not await (GROUPS.find_one({"id": gid})):
+        try:
+            gidtitle = message.chat.username
+        except KeyError:
+            gidtitle = message.chat.title
+        await GROUPS.insert_one({"id": gid, "grp": gidtitle})
+        await clog("HELLBOT_MUSIC", f"Bot added to a new group\n\n{gidtitle}\nID: `{gid}`", "NEW_GROUP")
     try:
-        invitelink = await client.export_chat_invite_link(chid)
+        invitelink = await client.export_chat_invite_link(gid)
     except:
         await message.reply_text(
             "<b><i>Make sure I'm admin bruh 😥</b></i>",
@@ -41,6 +53,15 @@ async def addchannel(client, message):
 @Client.on_message(filters.group & filters.command(["leave", f"leave@{BUN}"]))
 @authorized_users_only
 async def botleavegrp(client, message):
+    gid = message.chat.id
+    gidtype = message.chat.type
+    if gidtype in ["supergroup", "group"] and not await (GROUPS.find_one({"id": gid})):
+        try:
+            gidtitle = message.chat.username
+        except KeyError:
+            gidtitle = message.chat.title
+        await GROUPS.insert_one({"id": gid, "grp": gidtitle})
+        await clog("HELLBOT_MUSIC", f"Bot added to a new group\n\n{gidtitle}\nID: `{gid}`", "NEW_GROUP")
     await message.chat.leave()
 
 
