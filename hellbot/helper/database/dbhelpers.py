@@ -55,7 +55,7 @@ async def send_msg(user_id, message, cast):
         return 500, f"{user_id} : {traceback.format_exc()}\n"
 
 
-async def main_broadcast_handler(m, db):
+async def main_broadcast_handler(m, db, cast):
     all_users = await db.get_all_users()
     broadcast_msg = m.reply_to_message
     while True:
@@ -80,7 +80,8 @@ async def main_broadcast_handler(m, db):
         async for user in all_users:
             sts, msg = await send_msg(
                 user_id=int(user['id']),
-                message=broadcast_msg
+                message=broadcast_msg,
+                cast=cast
             )
             if msg is not None:
                 await broadcast_log_file.write(msg)
