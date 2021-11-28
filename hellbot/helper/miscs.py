@@ -1,6 +1,5 @@
 import sys
 import socket
-import heroku3
 import traceback
 
 from functools import wraps
@@ -94,26 +93,6 @@ async def _netcat(host, port, content):
 async def paste(content):
     link = await _netcat("ezup.dev", 9999, content)
     return link
-
-
-def fetch_heroku_git_url(api_key, app_name):
-    if not api_key:
-        return None
-    if not app_name:
-        return None
-    heroku = heroku3.from_key(api_key)
-    try:
-        heroku_applications = heroku.apps()
-    except:
-        return None
-    heroku_app = None
-    for app in heroku_applications:
-        if app.name == app_name:
-            heroku_app = app
-            break
-    if not heroku_app:
-        return None
-    return heroku_app.git_url.replace("https://", "https://api:" + api_key + "@")
 
 
 async def clog(name: str, text: str, tag: str):
