@@ -1,0 +1,20 @@
+# This is the list of all mandatory variables for this voice chat bot.
+# You can fill up your values here and rename this file to config.env
+# Dont give any quotations. Like ("" & '') also dont give space between around =
+# Not recommend because your bot token and string session is exposed. 
+
+
+API_HASH=
+API_ID=
+ARQ_API_KEY=
+ARQ_API_URL=https://thearq.tech/
+BOT_TOKEN=
+BOT_USERNAME=
+DB_UR=
+DURATION_LIMIT=
+HANDLER=
+HELLBOT_SESSION=
+LOGGER_ID=
+OWNER=
+SUDO_USERS=
+THUMB_URL=
