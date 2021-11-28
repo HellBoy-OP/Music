@@ -79,4 +79,4 @@ mdb_ = mdb.handlers
 
 
 def get_collections(name: str) -> AgnosticCollection:
-    return db[name]
+    return mdb_[name]
