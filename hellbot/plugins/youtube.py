@@ -9,7 +9,7 @@ from youtube_search import YoutubeSearch
 
 from ..helper.database.db import get_collections
 from ..helper.miscs import clog
-from ..config import BOT_USERNAME as BUN
+from ..config import BOT_USERNAME as BUN, THUMB_URL
 from ..helper.miscs import paste, capture_err
 
 GROUPS = get_collections("GROUPS")
@@ -244,3 +244,35 @@ async def ytmusic(client, message: Message):
     for files in (sedlyf, file_):
         if files and os.path.exists(files):
             os.remove(files)
+
+
+@Client.on_message(filters.command(['search', f'search@{BUN}']))
+async def search(client, message):
+    gid = message.chat.id
+    gidtype = message.chat.type
+    if gidtype in ["supergroup", "group"] and not await (GROUPS.find_one({"id": gid})):
+        try:
+            gidtitle = message.chat.username
+        except KeyError:
+            gidtitle = message.chat.title
+        await GROUPS.insert_one({"id": gid, "grp": gidtitle})
+        await clog("HELLBOT_MUSIC", f"Bot added to a new group\n\n{gidtitle}\nID: `{gid}`", "NEW_GROUP")
+    try:
+        if len(message.command) < 2:
+            await message.reply_text("<b><i>Give something to search plis..</b></i>")
+            return
+        query = message.text.split(" ", 1)[1]
+        m = await message.reply_text(f"<b><i>Searching for {query}...</b></i>")
+        results = YoutubeSearch(query, max_results=5).to_dict()
+        i = 1
+        text = ""
+        while i <= 5:
+            url = f"https://youtube.com{results[i]['url_suffix']}"
+            text += f"<b><i>#{i} Title:</b></i> <a href='{url}'>{results[i]['title']}</a>\n"
+            text += f"<b><i>Duration:</b></i> <code>{results[i]['duration']}</code>\n"
+            text += f"<b><i>Views:</b></i> <code>{results[i]['views']}</code>\n"
+            i += 1
+        await m.delete()
+        await message.reply_photo(THUMB_URL, text)
+    except Exception as e:
+        await message.reply_text(f"<b><i>ERROR !!</b></i> \n\n<code>{str(e)}</code>")
