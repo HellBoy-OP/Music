@@ -7,6 +7,7 @@ from functools import wraps
 from pyrogram import Client
 from pyrogram.errors.exceptions.forbidden_403 import ChatWriteForbidden
 from pyrogram.types import Message
+from html_telegraph_poster import TelegraphPoster
 
 from ..config import LOGGER_ID
 from .. import hellbot
@@ -118,3 +119,16 @@ def fetch_heroku_git_url(api_key, app_name):
 async def clog(name: str, text: str, tag: str):
     log = f"#{name.upper()}  #{tag.upper()}\n\n{text}"
     await hellbot.send_message(chat_id=LOGGER_ID, text=log)
+
+
+async def telegraph_paste(page_title, temxt):
+    cl1ent = TelegraphPoster(use_api=True)
+    auth = "[ †hê Hêllẞø† ]"
+    cl1ent.create_api_token(auth)
+    post_page = cl1ent.post(
+        title=page_title,
+        author=auth,
+        author_url="https://t.me/its_hellbot",
+        text=temxt,
+    )
+    return post_page["url"]
