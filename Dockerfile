@@ -8,4 +8,4 @@ RUN mkdir /hell/
 WORKDIR /hell/
 COPY . /hell/
 RUN pip3 install -U -r requirements.txt
-CMD python3 -m hellbot
+CMD ["python3", "-m", "hellbot"]
