@@ -10,3 +10,6 @@ pvt_filters = filters.private & ~ filters.edited & ~ filters.via_bot & ~ filters
 
 def command(commands: Union[str, List[str]]):
     return filters.command(commands, HANDLER)
+
+def commandpro(commands: Union[str, List[str]]):
+    return filters.command(commands,"")
