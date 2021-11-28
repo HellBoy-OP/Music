@@ -1,10 +1,10 @@
+import asyncio
 import glob
 import logging
 from pathlib import Path
 
 from . import hellbot, run, load_plugins
 
-print("!!! HellBot Music Start-up Complete !!!")
 
 path = "hellbot/plugins/*.py"
 files = glob.glob(path)
@@ -14,5 +14,14 @@ for name in files:
         plugin_name = patt.stem
         load_plugins(plugin_name.replace(".py", ""))
 
-hellbot.start()
-run()
+async def main():
+    await hellbot.start()
+    run()
+    print("!!! HellBot Music Start-up Complete !!!")
+    await hellbot.send_message(LOGGER_ID, "#START \n\nBot is now working")
+    await idle()
+    await hellbot.stop()
+    _close_db()
+
+
+asyncio.get_event_loop().run_until_complete(main())
