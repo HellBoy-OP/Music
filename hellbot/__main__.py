@@ -2,6 +2,7 @@ import asyncio
 import glob
 import logging
 from pathlib import Path
+from pyrogram import idle
 
 from . import hellbot, run, load_plugins
 
@@ -21,7 +22,6 @@ async def main():
     await hellbot.send_message(LOGGER_ID, "#START \n\nBot is now working")
     await idle()
     await hellbot.stop()
-    _close_db()
 
 
 asyncio.get_event_loop().run_until_complete(main())
