@@ -5,7 +5,7 @@ ffmpeg
 git+https://github.com/HellBoy-OP/yt-dlp-fork
 git+https://github.com/HellBoy-OP/yt-fork
 gitpython
-heroku3
+html-telegraph-poster
 motor
 psutil
 pyrogram
