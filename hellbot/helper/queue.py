@@ -1,5 +1,13 @@
-from asyncio import Queue, QueueEmpty
-from typing import Dict, Union
+from asyncio import Queue as _Queue, QueueEmpty as Empty
+from typing import Dict
+
+
+class Queue(_Queue):
+    _queue: list = []
+
+    def clear(self):
+        self._queue.clear()
+
 
 queues: Dict[int, Queue] = {}
 
@@ -11,12 +19,13 @@ async def put(chat_id: int, **kwargs) -> int:
     return queues[chat_id].qsize()
 
 
-def get(chat_id: int) -> Union[Dict[str, str], None]:
+def get(chat_id: int) -> Dict[str, str]:
     if chat_id in queues:
         try:
             return queues[chat_id].get_nowait()
-        except QueueEmpty:
-            return None
+        except Empty:
+            return {}
+    return {}
 
 
 def is_empty(chat_id: int) -> bool:
@@ -36,7 +45,7 @@ def task_done(chat_id: int):
 def clear(chat_id: int):
     if chat_id in queues:
         if queues[chat_id].empty():
-            raise QueueEmpty
+            raise Empty
         else:
-            queues[chat_id].queue = []
-    raise QueueEmpty
+            queues[chat_id].clear()
+    raise Empty
