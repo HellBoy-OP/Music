@@ -24,7 +24,7 @@ async def get_admins(chat: Chat) -> List[User]:
                 to_set.append(administrator.user.id)
 
         set_ad(chat.id, to_set)
-        return await get_administrators(chat)
+        return await get_admins(chat)
 
 
 async def extract_userid(message, text: str):
