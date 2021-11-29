@@ -110,14 +110,13 @@ async def cbhowtouse(_, query: CallbackQuery):
 
 <i>Done! You are good to go. Now see my command menu to get details of commands I support.</i>
 
-<b><i>By:</b></i> @Its_HellBot
-""",
+<b><i>By:</b></i> @Its_HellBot""",
         reply_markup=InlineKeyboardMarkup(
             [
                 InlineKeyboardButton("Menu 🔙", callback_data="cbhelpmenu"),
                 InlineKeyboardButton("Commands 📜", callback_data="cbcmds")
             ]
-        ),
+        )
     )
 
 
