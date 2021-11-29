@@ -1,6 +1,6 @@
 from pyrogram import Client as Bot
 
-from .helper.pycalls import run
+from . import run
 from .config import API_HASH, API_ID, BOT_TOKEN
 
 
