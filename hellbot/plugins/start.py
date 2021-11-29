@@ -100,7 +100,7 @@ async def ping(client: Client, message: Message):
     current_time = datetime.datetime.utcnow()
     uptime_sec = (current_time - START_TIME).total_seconds()
     uptime = await _human_time_duration(int(uptime_sec))
-    await m_reply.edit_text(f"<b><i>• Pong!</b></i> <i>{delta_ping * 1000:.3f} ms</i> \n<b><i>• Uptime:</b></i> <code>{uptime}</code> \n<b><i>• Start Time:</b></i> <code>{START_TIME_ISO}</code>")
+    await m_reply.edit_text(f"<b><i>• Pong!</b></i> <i>{_ping * 1000:.3f} ms</i> \n<b><i>• Uptime:</b></i> <code>{uptime}</code> \n<b><i>• Start Time:</b></i> <code>{START_TIME_ISO}</code>")
 
 
 @Client.on_message(command(["id", f"id@{BUN}"]))
