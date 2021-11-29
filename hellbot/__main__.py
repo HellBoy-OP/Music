@@ -2,11 +2,11 @@ import glob
 import logging
 from pathlib import Path
 
-from . import hellbot, run, load_plugins
+from . import hellbot, client, run, load_plugins
 
 hellbot.start()
+client.run()
 run()
 
 print("!!! HellBot Music Start-up Complete !!!")
-from .plugins import admins, callbacks, chataction, groups, inline, ownercb, owners, play, start, youtube
-print("IMPORTED PLUGINS")
+
