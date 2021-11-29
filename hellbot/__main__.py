@@ -1,7 +1,14 @@
-from . import hellbot, run
+from pyrogram import Client as Bot
+
+from . import run
+from .config import API_HASH, API_ID, BOT_TOKEN
 
 
-print("!!! HellBot Music Start-up Complete !!!")
-
-hellbot.start()
+Bot(
+    'HellBot-Music',
+    API_ID,
+    API_HASH,
+    bot_token=BOT_TOKEN,
+    plugins={'root': 'hellbot.plugins'},
+).start()
 run()

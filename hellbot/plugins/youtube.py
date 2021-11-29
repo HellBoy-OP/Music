@@ -122,7 +122,7 @@ async def song(client, message):
         for i in range(len(dur_arr)-1, -1, -1):
             dur += (int(dur_arr[i]) * secmul)
             secmul *= 60
-        await message.reply_audio(audio_file, caption=rep, thumb=thumb_name, performer="[ †hê Hêllẞø† ]" parse_mode='md', title=title, duration=dur)
+        await message.reply_audio(audio_file, caption=rep, thumb=thumb_name, performer="[ †hê Hêllẞø† ]", parse_mode='md', title=title, duration=dur)
         await m.delete()
     except Exception as e:
         await m.edit(e)

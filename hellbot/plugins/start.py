@@ -37,8 +37,8 @@ async def _human_time_duration(seconds):
 @Client.on_message(command("start") & filters.private & ~filters.edited)
 async def start_(client: Client, message: Message):
     await message.reply_photo(
-        BOT_PIC,
-        f"<b><i>Hello there!! \nI'm a Telegram voice chat music player by @Its_Hellbot. Enjoy my advanced features along with a simple and sexy interface</b></i>",
+        photo=BOT_PIC,
+        caption=f"<b><i>Hello there!! \nI'm a Telegram voice chat music player by @Its_Hellbot. Enjoy my advanced features along with a simple and sexy interface</b></i>",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
@@ -80,7 +80,7 @@ async def start(client: Client, message: Message):
             gidtitle = message.chat.title
         await GROUPS.insert_one({"id": gid, "grp": gidtitle})
         await clog("HELLBOT_MUSIC", f"Bot added to a new group\n\n{gidtitle}\nID: `{gid}`", "NEW_GROUP")
-    await message.reply_photo(BOT_PIC, f"<b><i>🤠 Yo!! Wanna listen to some music now?</b></i>")
+    await message.reply_photo(photo=BOT_PIC, caption=f"<b><i>🤠 Yo!! Wanna listen to some music now?</b></i>")
 
 
 @Client.on_message(command(["ping", f"ping@{BUN}"]) & ~filters.edited)
