@@ -17,7 +17,7 @@ async def close(_, query: CallbackQuery):
 @Client.on_callback_query(filters.regex("cbback"))
 async def cbback(_, query: CallbackQuery):
     await query.edit_message_caption(
-        "**Hêllẞø† Control Panel :**",
+        caption="**Hêllẞø† Control Panel :**",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
@@ -94,7 +94,7 @@ __**Hello!! This is a voice chat music player bot. You can listen to any music u
 @Client.on_callback_query(filters.regex("cbhelpmenu"))
 async def cbhelpmenu(_, query: CallbackQuery):
     await query.edit_message_caption(
-        f"""<b><i>Hello there {query.message.from_user.mention} 😉️!</b></i>
+        caption=f"""<b><i>Hello there {query.message.from_user.mention} 😉️!</b></i>
 <i>Here is the help menu and some basic guide:</i>""",
         reply_markup=InlineKeyboardMarkup([InlineKeyboardButton("How to use ❓", callback_data="cbhowtouse")])
     )
@@ -103,7 +103,7 @@ async def cbhelpmenu(_, query: CallbackQuery):
 @Client.on_callback_query(filters.regex("cbhowtouse"))
 async def cbhowtouse(_, query: CallbackQuery):
     await query.edit_message_caption(
-        f"""<b><i>How to use me?</b></i>
+        caption=f"""<b><i>How to use me?</b></i>
 
 <b>Step 1:</b> <i>Add me( @{BUN} ) and @{(await USER.get_me()).username} in your group or just add me and send /join for automatic joining process.</i>
 <b>Step 2:</b> <i>Promote me ( @{BUN} ) and @{(await USER.get_me()).username} with atleast Manage Voice Chat rights.</i>
@@ -118,14 +118,13 @@ async def cbhowtouse(_, query: CallbackQuery):
                 InlineKeyboardButton("Commands 📜", callback_data="cbcmds")
             ]
         ),
-        disable_web_page_preview=True
     )
 
 
 @Client.on_callback_query(filters.regex("cbgetlyrics"))
 async def cbgetlyrics(_, query: CallbackQuery):
     await query.edit_message_caption(
-        f"""<b><i>🎶 Lyrics Module:</b></i>
+        caption=f"""<b><i>🎶 Lyrics Module:</b></i>
 
 <b>Usage:</b> <code>Gets you the lyrics of given song.</code>
 <b>Command:</b> <code>/lyrics song name</code>
@@ -146,7 +145,7 @@ async def cbgetlyrics(_, query: CallbackQuery):
 @Client.on_callback_query(filters.regex("cbytsearch"))
 async def cbytsearch(_, query: CallbackQuery):
     await query.edit_message_caption(
-        f"""<b><i>Youtube Module:</b></i>
+        caption=f"""<b><i>Youtube Module:</b></i>
 
 <b>Usage:</b> <code>Searches youtube video in inline mode or via command.</code>
 
@@ -171,7 +170,7 @@ async def cbytsearch(_, query: CallbackQuery):
 @Client.on_callback_query(filters.regex("cbmusicdown"))
 async def cbmusicdown(_, query: CallbackQuery):
     await query.edit_message_caption(
-        f"""<b><i>Song Download Module:</b></i>
+        caption=f"""<b><i>Song Download Module:</b></i>
 
 <b>Usage:</b> <code>Downloads requested song from YouTube, Deezer, Saavn.</code>
 
@@ -199,7 +198,7 @@ async def cbmusicdown(_, query: CallbackQuery):
 @Client.on_callback_query(filters.regex("cbytviddown"))
 async def cbytviddown(_, query: CallbackQuery):
     await query.edit_message_caption(
-        f"""<b><i>Youtube Video Module:</b></i>
+        caption=f"""<b><i>Youtube Video Module:</b></i>
 
 <b>Usage:</b> <code>Downloads the video from youtube.</code>
 <b>Command:</b> <code>/video query</code>
@@ -220,7 +219,7 @@ async def cbytviddown(_, query: CallbackQuery):
 @Client.on_callback_query(filters.regex("cbdelcmds"))
 async def cbdelcmds(_, query: CallbackQuery):
     await query.edit_message_caption(
-        f"""<b><i>Clean Commands:</i></b>
+        caption=f"""<b><i>Clean Commands:</i></b>
 
 <b>Usage:</b> <code>Deletes the command in your group to avoid spam in your group with bluetexts.</code>
 <b>Command:</b> <code>/delcmd on</code> & <code>/delcmd off</code>
@@ -240,7 +239,7 @@ async def cbdelcmds(_, query: CallbackQuery):
 @Client.on_callback_query(filters.regex("quotly"))
 async def quotly(_, query: CallbackQuery):
     await query.edit_message_caption(
-        f"""<b><i>Quotes Module:</b></i>
+        caption=f"""<b><i>Quotes Module:</b></i>
 
 <b>Usage:</b> <code>Quotes the given message to sticker.</code>
 
