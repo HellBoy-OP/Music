@@ -19,6 +19,24 @@ async def _(bot: Client, cmd: command):
     await handle_user_status(bot, cmd)
 
 
+btns = InlineKeyboardMarkup(
+    [
+        [
+            InlineKeyboardButton("Pause ⏸", callback_data="cbpause"),
+            InlineKeyboardButton("Resume ▶️", callback_data="cbresume")
+        ],
+        [
+            InlineKeyboardButton("Skip ⏩", callback_data="cbskip"),
+            InlineKeyboardButton("End ⏹", callback_data="cbend")
+        ],
+        [
+            InlineKeyboardButton("Mute 🔇", callback_data="cbmute"),
+            InlineKeyboardButton("Unmute 🔊", callback_data="cbunmute")
+        ]
+    ]
+)
+
+
 @Client.on_message(command(["play", f"play@{BUN}"]) & grp_filters)
 @errors
 async def play(_, message: Message):
@@ -37,7 +55,7 @@ async def play(_, message: Message):
     is_yt = False
     response = await message.reply_text("<b><i>Processing ...</b></i>")
     if audio:
-        if round(audio.duration / 60) > DURATION_LIMIT:
+        if round(audio.duration / 60) > int(DURATION_LIMIT):
             raise DurationLimitError(
                 f"<b><i>Actually there's a duration limit and this audio crossed that. My limit is {DURATION_LIMIT} minutes.</b></i>"
             )
@@ -72,16 +90,13 @@ async def play(_, message: Message):
             except Exception as e:
                 await response.edit(f"<b><i>ERROR !!</i></b> \n\n<code>{str(e)}</code>")
                 return
-            try:
-                sec, dur, dur_arr = 1, 0, duration.split(':')
-                for i in range(len(dur_arr)-1, -1, -1):
-                    dur += (int(dur_arr[i]) * sec)
-                    sec *= 60
-                if (dur / 60) > DURATION_LIMIT:
-                    await response.edit(f"<b><i>Requested Song was longer than {DURATION_LIMIT} minutes. ABORTING PROCESS!!</i></b>")
-                    return
-            except:
-                pass
+            sec, dur, dur_arr = 1, 0, duration.split(':')
+            for i in range(len(dur_arr)-1, -1, -1):
+                dur += (int(dur_arr[i]) * sec)
+                sec *= 60
+            if (dur / 60) > DURATION_LIMIT:
+                await response.edit(f"<b><i>Requested Song was longer than {DURATION_LIMIT} minutes. ABORTING PROCESS!!</i></b>")
+                return
             file = await converter.convert(youtube.download(url))
             is_yt = True
     else:
@@ -92,14 +107,14 @@ async def play(_, message: Message):
         await response.delete()
         if is_yt:
             await message.reply_photo(
-                THUMB_URL,
-                f"<b><i>• Song Name:</b>/i> <a href='{url}'>{title[:20]}...</a> \n<b><i>• Duration:</b></i> <code>{duration}</code> \n<b><i>• Requested By:</i></b> {user_} \n<b><i>• Status:</b></i> <code>#{position} in queue</code>",
+                photo=THUMB_URL,
+                caption=f"<b><i>• Song Name:</b>/i> <a href='{url}'>{title[:20]}...</a> \n<b><i>• Duration:</b></i> <code>{duration}</code> \n<b><i>• Requested By:</i></b> {user_} \n<b><i>• Status:</b></i> <code>#{position} in queue</code>",
                 reply_markup=btns,
             )
         else:
             await message.reply_text(
-                THUMB_URL,
-                f"<b><i>Playing Selected File !!</b></i> \n<b><i>Requested By:</b></i> {user_} \n<b><i>• Status:</b></i> <code>#{position} in queue</code>",
+                photo=THUMB_URL,
+                caption=f"<b><i>Playing Selected File !!</b></i> \n<b><i>Requested By:</b></i> {user_} \n<b><i>• Status:</b></i> <code>#{position} in queue</code>",
                 reply_markup=btns,
             )
     else:
@@ -107,13 +122,13 @@ async def play(_, message: Message):
         await response.delete()
         if is_yt:
             await message.reply_photo(
-                THUMB_URL,
-                f"<b><i>• Song Name:</b>/i> <a href='{url}'>{title[:20]}...</a> \n<b><i>• Duration:</b></i> <code>{duration}</code> \n<b><i>• Requested By:</i></b> {user_} \n<b><i>• Status:</b></i> <code>Started Playing</code>",
+                photo=THUMB_URL,
+                caption=f"<b><i>• Song Name:</b>/i> <a href='{url}'>{title[:20]}...</a> \n<b><i>• Duration:</b></i> <code>{duration}</code> \n<b><i>• Requested By:</i></b> {user_} \n<b><i>• Status:</b></i> <code>Started Playing</code>",
                 reply_markup=btns,
             )
         else:
             await message.reply_text(
-                THUMB_URL,
-                f"<b><i>Playing Selected File !!</b></i> \n<b><i>Requested By:</b></i> {user_} \n<b><i>• Status:</b></i> <code>Started Playing</code>",
+                photo=THUMB_URL,
+                caption=f"<b><i>Playing Selected File !!</b></i> \n<b><i>Requested By:</b></i> {user_} \n<b><i>• Status:</b></i> <code>Started Playing</code>",
                 reply_markup=btns,
             )
