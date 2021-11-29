@@ -19,6 +19,24 @@ async def _(bot: Client, cmd: command):
     await handle_user_status(bot, cmd)
 
 
+btns = InlineKeyboardMarkup(
+    [
+        [
+            InlineKeyboardButton("Pause ⏸", callback_data="cbpause"),
+            InlineKeyboardButton("Resume ▶️", callback_data="cbresume")
+        ],
+        [
+            InlineKeyboardButton("Skip ⏩", callback_data="cbskip"),
+            InlineKeyboardButton("End ⏹", callback_data="cbend")
+        ],
+        [
+            InlineKeyboardButton("Mute 🔇", callback_data="cbmute"),
+            InlineKeyboardButton("Unmute 🔊", callback_data="cbunmute")
+        ]
+    ]
+)
+
+
 @Client.on_message(command(["play", f"play@{BUN}"]) & grp_filters)
 @errors
 async def play(_, message: Message):
@@ -72,16 +90,13 @@ async def play(_, message: Message):
             except Exception as e:
                 await response.edit(f"<b><i>ERROR !!</i></b> \n\n<code>{str(e)}</code>")
                 return
-            try:
-                sec, dur, dur_arr = 1, 0, duration.split(':')
-                for i in range(len(dur_arr)-1, -1, -1):
-                    dur += (int(dur_arr[i]) * sec)
-                    sec *= 60
-                if (dur / 60) > int(DURATION_LIMIT):
-                    await response.edit(f"<b><i>Requested Song was longer than {DURATION_LIMIT} minutes. ABORTING PROCESS!!</i></b>")
-                    return
-            except:
-                pass
+            sec, dur, dur_arr = 1, 0, duration.split(':')
+            for i in range(len(dur_arr)-1, -1, -1):
+                dur += (int(dur_arr[i]) * sec)
+                sec *= 60
+            if (dur / 60) > DURATION_LIMIT:
+                await response.edit(f"<b><i>Requested Song was longer than {DURATION_LIMIT} minutes. ABORTING PROCESS!!</i></b>")
+                return
             file = await converter.convert(youtube.download(url))
             is_yt = True
     else:
