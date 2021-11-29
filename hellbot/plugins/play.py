@@ -37,7 +37,7 @@ async def play(_, message: Message):
     is_yt = False
     response = await message.reply_text("<b><i>Processing ...</b></i>")
     if audio:
-        if round(audio.duration / 60) > DURATION_LIMIT:
+        if round(audio.duration / 60) > int(DURATION_LIMIT):
             raise DurationLimitError(
                 f"<b><i>Actually there's a duration limit and this audio crossed that. My limit is {DURATION_LIMIT} minutes.</b></i>"
             )
@@ -77,7 +77,7 @@ async def play(_, message: Message):
                 for i in range(len(dur_arr)-1, -1, -1):
                     dur += (int(dur_arr[i]) * sec)
                     sec *= 60
-                if (dur / 60) > DURATION_LIMIT:
+                if (dur / 60) > int(DURATION_LIMIT):
                     await response.edit(f"<b><i>Requested Song was longer than {DURATION_LIMIT} minutes. ABORTING PROCESS!!</i></b>")
                     return
             except:
@@ -92,14 +92,14 @@ async def play(_, message: Message):
         await response.delete()
         if is_yt:
             await message.reply_photo(
-                THUMB_URL,
-                f"<b><i>• Song Name:</b>/i> <a href='{url}'>{title[:20]}...</a> \n<b><i>• Duration:</b></i> <code>{duration}</code> \n<b><i>• Requested By:</i></b> {user_} \n<b><i>• Status:</b></i> <code>#{position} in queue</code>",
+                photo=THUMB_URL,
+                caption=f"<b><i>• Song Name:</b>/i> <a href='{url}'>{title[:20]}...</a> \n<b><i>• Duration:</b></i> <code>{duration}</code> \n<b><i>• Requested By:</i></b> {user_} \n<b><i>• Status:</b></i> <code>#{position} in queue</code>",
                 reply_markup=btns,
             )
         else:
             await message.reply_text(
-                THUMB_URL,
-                f"<b><i>Playing Selected File !!</b></i> \n<b><i>Requested By:</b></i> {user_} \n<b><i>• Status:</b></i> <code>#{position} in queue</code>",
+                photo=THUMB_URL,
+                caption=f"<b><i>Playing Selected File !!</b></i> \n<b><i>Requested By:</b></i> {user_} \n<b><i>• Status:</b></i> <code>#{position} in queue</code>",
                 reply_markup=btns,
             )
     else:
@@ -107,13 +107,13 @@ async def play(_, message: Message):
         await response.delete()
         if is_yt:
             await message.reply_photo(
-                THUMB_URL,
-                f"<b><i>• Song Name:</b>/i> <a href='{url}'>{title[:20]}...</a> \n<b><i>• Duration:</b></i> <code>{duration}</code> \n<b><i>• Requested By:</i></b> {user_} \n<b><i>• Status:</b></i> <code>Started Playing</code>",
+                photo=THUMB_URL,
+                caption=f"<b><i>• Song Name:</b>/i> <a href='{url}'>{title[:20]}...</a> \n<b><i>• Duration:</b></i> <code>{duration}</code> \n<b><i>• Requested By:</i></b> {user_} \n<b><i>• Status:</b></i> <code>Started Playing</code>",
                 reply_markup=btns,
             )
         else:
             await message.reply_text(
-                THUMB_URL,
-                f"<b><i>Playing Selected File !!</b></i> \n<b><i>Requested By:</b></i> {user_} \n<b><i>• Status:</b></i> <code>Started Playing</code>",
+                photo=THUMB_URL,
+                caption=f"<b><i>Playing Selected File !!</b></i> \n<b><i>Requested By:</b></i> {user_} \n<b><i>• Status:</b></i> <code>Started Playing</code>",
                 reply_markup=btns,
             )
