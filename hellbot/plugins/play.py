@@ -75,7 +75,7 @@ async def play(_, message: Message):
                 not path.isfile(path.join("downloads", file_name))
             ) else file_name
         )
-    elif len(qry) > 1:
+    elif not audio:
         if qry[1].startswith("https://youtu"):
             await response.edit("<b><i>Youtube Url Detected!! Processing...</b></i>")
             url = qry[1]
@@ -90,13 +90,13 @@ async def play(_, message: Message):
             except Exception as e:
                 await response.edit(f"<b><i>ERROR !!</i></b> \n\n<code>{str(e)}</code>")
                 return
-            sec, dur, dur_arr = 1, 0, duration.split(':')
-            for i in range(len(dur_arr)-1, -1, -1):
-                dur += (int(dur_arr[i]) * sec)
-                sec *= 60
-            if (dur / 60) > DURATION_LIMIT:
-                await response.edit(f"<b><i>Requested Song was longer than {DURATION_LIMIT} minutes. ABORTING PROCESS!!</i></b>")
-                return
+           # sec, dur, dur_arr = 1, 0, duration.split(':')
+           # for i in range(len(dur_arr)-1, -1, -1):
+           #     dur += (int(dur_arr[i]) * sec)
+           #     sec *= 60
+           # if int(dur / 60) > int(DURATION_LIMIT):
+           #     await response.edit(f"<b><i>Requested Song was longer than {DURATION_LIMIT} minutes. ABORTING PROCESS!!</i></b>")
+           #     return
             file = await converter.convert(youtube.download(url))
             is_yt = True
     else:
@@ -112,7 +112,7 @@ async def play(_, message: Message):
                 reply_markup=btns,
             )
         else:
-            await message.reply_text(
+            await message.reply_photo(
                 photo=THUMB_URL,
                 caption=f"<b><i>Playing Selected File !!</b></i> \n<b><i>Requested By:</b></i> {user_} \n<b><i>• Status:</b></i> <code>#{position} in queue</code>",
                 reply_markup=btns,
@@ -127,7 +127,7 @@ async def play(_, message: Message):
                 reply_markup=btns,
             )
         else:
-            await message.reply_text(
+            await message.reply_photo(
                 photo=THUMB_URL,
                 caption=f"<b><i>Playing Selected File !!</b></i> \n<b><i>Requested By:</b></i> {user_} \n<b><i>• Status:</b></i> <code>Started Playing</code>",
                 reply_markup=btns,
