@@ -10,6 +10,7 @@ motor
 psutil
 pyrogram
 pytgcalls
+python-arq
 python-dotenv
 requests
 search_engine_parser
