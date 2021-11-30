@@ -18,7 +18,7 @@ def download(url: str) -> str:
     info = ytdl.extract_info(url, False)
     duration = round(info["duration"] / 60)
 
-    if duration > DURATION_LIMIT:
+    if duration > int(DURATION_LIMIT):
         raise DurationLimitError(
             f"<b><i>!!! Requested video is {duration} minutes long which crosses my limit of {DURATION_LIMIT} minutes !!!</b></i>"
         )
