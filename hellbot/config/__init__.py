@@ -9,7 +9,7 @@ load_dotenv()
 API_HASH = os.environ.get("API_HASH", None)
 API_ID = os.environ.get("API_ID", None)
 ARQ_API_KEY = os.environ.get("ARQ_API_KEY", None)
-ARQ_API_URL = "https://thearq.tech/"
+ARQ_API_URL = "https://grambuilders.tech"
 BOT_TOKEN = os.environ.get("BOT_TOKEN", None)
 BOT_USERNAME = os.environ.get("BOT_USERNAME", None)
 DB_URI = os.environ.get("DATABASE_URL", None)
