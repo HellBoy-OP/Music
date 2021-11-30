@@ -1,3 +1,5 @@
+import json
+
 from os import path
 from pyrogram import Client, filters
 from pyrogram.types import Message, Voice, InlineKeyboardMarkup, InlineKeyboardButton
@@ -52,6 +54,8 @@ async def play(_, message: Message):
     audio = (message.reply_to_message.audio or message.reply_to_message.voice) if message.reply_to_message else None
     user_ = f"<a href='tg://user?id={message.from_user.id}'>{message.from_user.first_name}</a>"
     qry = message.text.split(" ", 1)
+    if not message.reply_to_message and len(qry) == 1:
+        return await message.reply_text("<b><i>Give something to play!!</b></i>")
     is_yt = False
     response = await message.reply_text("<b><i>Processing ...</b></i>")
     if audio:
@@ -75,40 +79,26 @@ async def play(_, message: Message):
                 not path.isfile(path.join("downloads", file_name))
             ) else file_name
         )
-    elif not audio:
-        if qry[1].startswith("https://youtu"):
-            await response.edit("<b><i>Youtube Url Detected!! Processing...</b></i>")
-            url = qry[1]
-            file = await converter.convert(youtube.download(url))
-        else:
-            await response.edit(f"<b><i>Searching “ {qry[1]} ” on Youtube...</i></b>")
-            try:
-                results = YoutubeSearch(qry[1], max_results=1).to_dict()
-                duration = results[0]["duration"]
-                title = results[0]["title"][:40]
-                url = f"https://youtube.com{results[0]['url_suffix']}"
-            except Exception as e:
-                await response.edit(f"<b><i>ERROR !!</i></b> \n\n<code>{str(e)}</code>")
-                return
-           # sec, dur, dur_arr = 1, 0, duration.split(':')
-           # for i in range(len(dur_arr)-1, -1, -1):
-           #     dur += (int(dur_arr[i]) * sec)
-           #     sec *= 60
-           # if int(dur / 60) > int(DURATION_LIMIT):
-           #     await response.edit(f"<b><i>Requested Song was longer than {DURATION_LIMIT} minutes. ABORTING PROCESS!!</i></b>")
-           #     return
-            file = await converter.convert(youtube.download(url))
-            is_yt = True
     else:
-        await response.edit("<b><i>Give something to play.</i></b>")
-        return
+        await response.edit(f"<b><i>Searching “ {qry[1]} ” on Youtube...</i></b>", disable_web_page_preview=True)
+        try:
+            results = json.loads(YoutubeSearch(qry[1], max_results=1).to_json())
+        except KeyError:
+            return await response.edit("<b><i>ERROR !!</b></i> \n\n<i>Unable to find relevant search queries...</i>")
+        for i in results["videos"]:
+            url = f"https://www.youtube.com{i['url_suffix']}"
+            duration = i['duration']
+            title = i['title'][:50]
+            views = i['views']
+        file = await converter.convert(youtube.download(url))
+        is_yt = True
     if message.chat.id in pycalls.active_chats:
-        position = await queue.put(message.chat.id, file)
+        position = await queue.put(message.chat.id, file=file)
         await response.delete()
         if is_yt:
             await message.reply_photo(
                 photo=THUMB_URL,
-                caption=f"<b><i>• Song Name:</b>/i> <a href='{url}'>{title[:20]}...</a> \n<b><i>• Duration:</b></i> <code>{duration}</code> \n<b><i>• Requested By:</i></b> {user_} \n<b><i>• Status:</b></i> <code>#{position} in queue</code>",
+                caption=f"<b><i>• Song Name:</b></i> <a href='{url}'>{title}...</a> \n<b><i>• Duration:</b></i> <code>{duration}</code> \n<b><i>• Views:</b></i> <code>{views}</code> \n<b><i>• Requested By:</i></b> {user_} \n<b><i>• Status:</b></i> <code>#{position} in queue</code>",
                 reply_markup=btns,
             )
         else:
@@ -123,7 +113,7 @@ async def play(_, message: Message):
         if is_yt:
             await message.reply_photo(
                 photo=THUMB_URL,
-                caption=f"<b><i>• Song Name:</b>/i> <a href='{url}'>{title[:20]}...</a> \n<b><i>• Duration:</b></i> <code>{duration}</code> \n<b><i>• Requested By:</i></b> {user_} \n<b><i>• Status:</b></i> <code>Started Playing</code>",
+                caption=f"<b><i>• Song Name:</b></i> <a href='{url}'>{title}...</a> \n<b><i>• Duration:</b></i> <code>{duration}</code> \n<b><i>• Views:</b></i> <code>{views}</code> \n<b><i>• Requested By:</i></b> {user_} \n<b><i>• Status:</b></i> <code>Started Playing</code>",
                 reply_markup=btns,
             )
         else:

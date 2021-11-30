@@ -77,7 +77,7 @@ async def cbstart(_, query: CallbackQuery):
 @Client.on_callback_query(filters.regex("cbhelpmenu"))
 async def cbhelpmenu(_, query: CallbackQuery):
     await query.edit_message_text(
-        caption=f"""<b><i>Hello there {query.message.from_user.mention} 😉️!</b></i>
+        text=f"""<b><i>Hello there {query.message.from_user.mention} 😉️!</b></i>
 <i>Here is the help menu and some basic guide:</i>""",
         reply_markup=InlineKeyboardMarkup([InlineKeyboardButton("How to use ❓", callback_data="cbhowtouse")])
     )
@@ -151,6 +151,89 @@ async def cbcmds(client: Client, query: CallbackQuery):
     )
 
 
+@Client.on_callback_query(filters.regex("cbvc"))
+async def cdvc(_, query: CallbackQuery):
+    await query.edit_message_text(
+        text=f"""<b><i>Voice Chat Command:</b></i>
+
+
+<b>1. Command:</b> <code>/play</code>
+<b>    Usage:</b> <code>Plays the audio in voice chat. If replied to a audio file it'll be played else give a name/link to search and play it from Youtube.</code>
+<b>    Example:</b> <code>/play into your arms</code>
+""",
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton("Back 🔙", callback_data="cbcmd")
+                ]
+            ]
+        )
+    )
+
+
+@Client.on_callback_query(filters.regex("cbadmins"))
+async def cbadmins(_, query: CallbackQuery):
+    await query.edit_message_text(
+        text=f"""<b></i>Admins & Sudo Commands:</b></i>
+
+<b>1. Command:</b> <code>/reload</code>
+<b>    Usage:</b> <code>Refresh the list of admins in that group.</code>
+<b>    Example:</b> <code>/reload or /admincache</code>
+
+<b>2. Command:</b> <code>/control</code>
+<b>    Usage:</b> <code>Opens the control panel with direct access to all controls.</code>
+<b>    Example:</b> <code>/control</code>
+
+<b>3. Command:</b> <code>/pause</code>
+<b>    Usage:</b> <code>Pauses the music in vouce chat.</code>
+<b>    Example:</b> <code>/pause</code>
+
+<b>4. Command:</b> <code>/resume</code>
+<b>    Usage:</b> <code>Resumes the paused music in voice chat.</code>
+<b>    Example:</b> <code>/resume</code>
+
+<b>5. Command:</b> <code>/end</code>
+<b>    Usage:</b> <code>Clears all the songs in queue and leveas the voice chat.</code>
+<b>    Example:</b> <code>/end</code>
+
+<b>6. Command:</b> <code>/skip</code>
+<b>    Usage:</b> <code>Skips the current song in voive chat.</code>
+<b>    Example:</b> <code>/skip</code>
+
+<b>7. Command:</b> <code>/mute</code>
+<b>    Usage:</b> <code>Mutes the Voice Chat.</code>
+<b>    Example:</b> <code>/mute</code>
+
+<b>8. Command:</b> <code>/unmute</code>
+<b>    Usage:</b> <code>Unmute the muted voice chat.</code>
+<b>    Example:</b> <code>/unmute</code>
+
+<b>9. Command:</b> <code>/auth</code>
+<b>    Usage:</b> <code>Authorises the replied user to use admin commands.</code>
+<b>    Example:</b> <code>/auth (reply)</code>
+
+<b>10. Command:</b> <code>/unauth</code>
+<b>    Usage:</b> <code>Unauthorises the replied authorised user.</code>
+<b>    Example:</b> <code>/unauth (reply)</code>
+
+<b>11. Command:</b> <code>/join</code>
+<b>    Usage:</b> <code>Voice Chat Player Account Joins the current group.</code>
+<b>    Example:</b> <code>/join</code>
+
+<b>12. Command:</b> <code>/leave</code>
+<b>    Usage:</b> <code>Voice Chat Player Account Leaves the current group.</code>
+<b>    Example:</b> <code>/leave</code>
+""",
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton("Back 🔙", callback_data="cbcmd")
+                ]
+            ]
+        )
+    )
+
+
 @Client.on_callback_query(filters.regex("cbothers"))
 async def cbothers(_, query: CallbackQuery):
     await query.edit_message_text(
@@ -166,6 +249,18 @@ async def cbothers(_, query: CallbackQuery):
 <b>    Example:</b> <code>/search Into your arms</code>
 <b>    Inline:</b> <code>@{BUN} query</code>
 <b>    Example:</b> <code>@{BUN} into your arms</code>
+
+<b>3. Command:</b> <code>/start</code>
+<b>    Usage:</b> <code>Get the start message.</code>
+<b>    Example:</b> <code>/start</code>
+
+<b>4. Command:</b> <code>/ping</code>
+<b>    Usage:</b> <code>Check ping time and uptime of bot.</code>
+<b>    Example:</b> <code>/ping</code>
+
+<b>5. Command:</b> <code>/id</code>
+<b>    Usage:</b> <code>Fetches the ID.</code>
+<b>    Example:</b> <code>/id</code>
 """,
         reply_markup=InlineKeyboardMarkup(
             [
@@ -201,24 +296,6 @@ async def cbdwl(_, query: CallbackQuery):
     )
 
 
-@Client.on_callback_query(filters.regex("cbdelcmds"))
-async def cbdelcmds(_, query: CallbackQuery):
-    await query.edit_message_text(
-        caption=f"""<b><i>Clean Commands:</i></b>
-
-<b>Usage:</b> <code>Deletes the command in your group to avoid spam in your group with bluetexts.</code>
-<b>Command:</b> <code>/delcmd on</code> & <code>/delcmd off</code>
-""",
-        reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton("Menu 🔙", callback_data="cbhelpmenu")
-                ]
-            ]
-        )
-    )
-
-
 @Client.on_callback_query(filters.regex("cbextras"))
 async def quotly(_, query: CallbackQuery):
     await query.edit_message_text(
@@ -235,6 +312,14 @@ async def quotly(_, query: CallbackQuery):
 <b>3. Command:</b> <code>/q r reply to a message.</code> [Quotes the replied message with it's reply.]
 <b>    Usage:</b> <code>Quotes the replied message with along with it's replied message.</code>
 <b>    Example:</b> <code>/q r (reply)</code>
+
+<b>4. Command:</b> <code>/delcmd</code>
+<b>    Usage:</b> <code>Deletes the command in your group to avoid spam in your group with bluetexts.</code>
+<b>    Example:</b> <code>/delcmd (on/off)</code>
+
+<b>5. Command:</b> <code>/lyrics</code>
+<b>    Usage:</b> <code>Gets the lyrics of requested song.</code>
+<b>    Example:</b> <code>/lyrics perfect</code>
 """,
         reply_markup=InlineKeyboardMarkup(
             [

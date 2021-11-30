@@ -22,7 +22,7 @@ OWNER_HELPCB = InlineKeyboardMarkup(
             InlineKeyboardButton("Tools 🔧", callback_data="cbownertools")
         ],
         [
-            InlineKeyboardButton("Help Menu 📜", callback_data="cbhelpmenu")
+            InlineKeyboardButton("Help Menu 📜", callback_data="cbcmd")
         ]
     ]
 )
@@ -48,6 +48,14 @@ async def cbowner(_, query: CallbackQuery):
 <b>4. Command:</b> <code>/stats</code>
 <b>    Usage:</b> <code>Statistics keeper of this bot.</code>
 <b>    Example:</b> <code>/stats</code>
+
+<b>5. Command:</b> <code>/eval</code>
+<b>    Usage:</b> <code>Executes a python script.</code>
+<b>    Example:</b> <code>/eval print("Hello World!")</code>
+
+<b>6. Command:</b> <code>/term</code>
+<b>    Usage:</b> <code>Runs a terminal code.</code>
+<b>    Example:</b> <code>/term echo Hello World</code>
 """,
         reply_markup=InlineKeyboardMarkup(
             [
