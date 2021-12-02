@@ -260,9 +260,9 @@ async def cbend(_, query: CallbackQuery):
 
 @Client.on_callback_query(filters.regex("cbskip"))
 async def cbskip(_, query: CallbackQuery):
-     if query.message.chat.id not in pycalls.active_chats:
+    if query.message.chat.id not in pycalls.active_chats:
         await query.edit_message_text("❗️ **Nothing is playing to skip!**", reply_markup=BACK_BUTTON)
-     else:
+    else:
         queue.task_done(query.message.chat.id)
         if queue.is_empty(query.message.chat.id):
             await pycalls.stop(query.message.chat.id)

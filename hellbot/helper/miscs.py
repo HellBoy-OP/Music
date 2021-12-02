@@ -97,7 +97,7 @@ async def paste(content):
 
 async def clog(name: str, text: str, tag: str):
     log = f"#{name.upper()}  #{tag.upper()}\n\n{text}"
-    await hellbot.send_message(chat_id=LOGGER_ID, text=log)
+    await Client.send_message(chat_id=LOGGER_ID, text=log)
 
 
 async def telegraph_paste(page_title, temxt):

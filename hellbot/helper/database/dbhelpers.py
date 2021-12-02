@@ -19,7 +19,7 @@ async def handle_user_status(bot, cmd):
     chat_id = cmd.chat.id
     if not await db.is_user_exist(chat_id):
         await db.add_user(chat_id)
-        await bot.send_message(LOGGER_ID, f"📌 #NEW_USER \n\n**User:** [{cmd.from_user.first_name}]({cmd.from_user.id}) \n**Id:** `{cmd.from_user.id}`")
+        await bot.send_message(LOGGER_ID, f"📌 #NEW_USER \n\n**User:** [{cmd.from_user.first_name}](tg://user?id={cmd.from_user.id}) \n**Id:** `{cmd.from_user.id}`")
 
     ban_status = await db.get_ban_status(chat_id)
     if ban_status["is_banned"]:

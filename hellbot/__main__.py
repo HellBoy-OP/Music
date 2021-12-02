@@ -1,6 +1,6 @@
 from pyrogram import Client as Bot
 
-from . import run
+from . import client, run
 from .config import API_HASH, API_ID, BOT_TOKEN
 
 
@@ -11,4 +11,6 @@ Bot(
     bot_token=BOT_TOKEN,
     plugins={'root': 'hellbot.plugins'},
 ).start()
+
 run()
+client.start()

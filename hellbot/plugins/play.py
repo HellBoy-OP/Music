@@ -108,7 +108,7 @@ async def play(_, message: Message):
                 reply_markup=btns,
             )
     else:
-        await pycalls.set_stream(message.chat.id, file)
+        await pycalls.set_stream(message.chat.id, file=file)
         await response.delete()
         if is_yt:
             await message.reply_photo(
