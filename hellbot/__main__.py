@@ -1,16 +1,19 @@
-from pyrogram import Client as Bot
+import asyncio
 
-from . import client, run
-from .config import API_HASH, API_ID, BOT_TOKEN
+from pyrogram import idle
+
+from . import hellbot, client
 
 
-Bot(
-    'HellBot-Music',
-    API_ID,
-    API_HASH,
-    bot_token=BOT_TOKEN,
-    plugins={'root': 'hellbot.plugins'},
-).start()
+# Starting HellBot Music
+async def startup():
+    print("••• HellBot Music Starting •••")
+    await client.start()
+    await hellbot.start()
+    print("••• HellBot Music Started •••")
+    await idle()
 
-run()
-client.start()
+
+loop = asyncio.get_event_loop()
+if __name__ == "__main__":
+    loop.run_until_complete(startup())

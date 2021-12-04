@@ -7,7 +7,7 @@ from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from youtubesearchpython import SearchVideos
 from youtube_search import YoutubeSearch
 
-from .. import arq
+from .. import arq, hellbot
 from ..helper.database.db import get_collections
 from ..helper.miscs import clog
 from ..config import BOT_USERNAME as BUN, THUMB_URL
@@ -78,8 +78,8 @@ async def progress(current, total, message, start, type_of_ps, file_name=None):
                 pass
 
 
-@Client.on_message(filters.command(['song', f'song@{BUN}']))
-async def song(client, message):
+@hellbot.on_message(filters.command(['song', f'song@{BUN}']))
+async def song(client: hellbot, message: Message):
     gid = message.chat.id
     gidtype = message.chat.type
     if gidtype in ["supergroup", "group"] and not await (GROUPS.find_one({"id": gid})):
@@ -136,8 +136,8 @@ async def song(client, message):
         print(e)
 
 
-@Client.on_message(filters.command(["lyrics", f"lyrics@{BUN}"]))
-async def lyrics_func(_, message):
+@hellbot.on_message(filters.command(["lyrics", f"lyrics@{BUN}"]))
+async def lyrics_func(_, message: Message):
     gid = message.chat.id
     gidtype = message.chat.type
     if gidtype in ["supergroup", "group"] and not await (GROUPS.find_one({"id": gid})):
@@ -162,8 +162,8 @@ async def lyrics_func(_, message):
     await m.edit(f"<b><i>Lyrics was too long. Paste it <a href='{lyrics}'>here</a>.</b></i>")
 
 
-@Client.on_message(filters.command(["video", "vsong", f"video@{BUN}", f"vsong@{BUN}"]))
-async def ytmusic(client, message: Message):
+@hellbot.on_message(filters.command(["video", "vsong", f"video@{BUN}", f"vsong@{BUN}"]))
+async def ytmusic(client: hellbot, message: Message):
     gid = message.chat.id
     gidtype = message.chat.type
     if gidtype in ["supergroup", "group"] and not await (GROUPS.find_one({"id": gid})):
@@ -248,9 +248,36 @@ async def ytmusic(client, message: Message):
         if files and os.path.exists(files):
             os.remove(files)
 
+@hellbot.on_message(filters.command(['saavn', f"saavn@{BUN}"]))
+async def saavn(_, message: Message):
+    if len(message.command) < 2:
+        return await message.reply_text("<b><i>Nothing was given to download.</b></i>")
+    query = message.text.split(" ", 1)[1]
+    msg = await message.reply_text(f"<b><i>Searching for {query} ...</b></i>")
+    try:
+        song = await arq.saavn(query)
+        if not song.ok:
+            return await msg.edit(song.result)
+        title = song.result[0].song
+        link = song.result[0].media_url
+        singer = song.result[0].singers
+        duration = song.result[0].duration
+        await msg.edit("Downloading")
+        audio = wget.download(link)
+        await msg.edit("<b><i>Got the song... Uploading...</b></i>")
+        await message.reply_audio(
+            audio=audio,
+            title=title,
+            performer="[ †hê Hêllẞø† ]",
+            duration=duration,
+        )
+        await msg.delete()
+    except Exception as e:
+        return await msg.edit(str(e))
 
-@Client.on_message(filters.command(['search', f'search@{BUN}']))
-async def search(client, message):
+
+@hellbot.on_message(filters.command(['search', f'search@{BUN}']))
+async def search(client: hellbot, message: Message):
     gid = message.chat.id
     gidtype = message.chat.type
     if gidtype in ["supergroup", "group"] and not await (GROUPS.find_one({"id": gid})):

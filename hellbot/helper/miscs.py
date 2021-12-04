@@ -9,7 +9,7 @@ from pyrogram.types import Message
 from html_telegraph_poster import TelegraphPoster
 
 from ..config import LOGGER_ID
-from .. import hellbot
+from .. import hellbot, client
 
 
 def get_file_id(msg: Message):
@@ -53,7 +53,8 @@ def capture_err(func):
         try:
             return await func(client, message, *args, **kwargs)
         except ChatWriteForbidden:
-            await Client.leave_chat(message.chat.id)
+            await hellbot.leave_chat(message.chat.id)
+            await client.leave_chat(message.chat.id)
             return
         except Exception as err:
             exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -71,7 +72,7 @@ def capture_err(func):
                 ),
             )
             for x in error_feedback:
-                await Client.send_message(LOGGER_ID, x)
+                await hellbot.send_message(LOGGER_ID, x)
             raise err
 
     return capture
@@ -97,7 +98,7 @@ async def paste(content):
 
 async def clog(name: str, text: str, tag: str):
     log = f"#{name.upper()}  #{tag.upper()}\n\n{text}"
-    await Client.send_message(chat_id=LOGGER_ID, text=log)
+    await hellbot.send_message(LOGGER_ID, text=log)
 
 
 async def telegraph_paste(page_title, temxt):

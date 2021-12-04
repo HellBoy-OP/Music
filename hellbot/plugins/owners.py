@@ -17,7 +17,7 @@ from ..config import BOT_USERNAME as BUN, OWNER, SUDO_USERS
 GROUPS = get_collections("GROUPS")
 
 
-@Client.on_message(filters.command("stats") & filters.user(OWNER))
+@hellbot.on_message(filters.command("stats") & filters.user(OWNER))
 async def botstats(_, message: Message):
     total, used, free = shutil.disk_usage(".")
     total = humanbytes(total)
@@ -29,20 +29,20 @@ async def botstats(_, message: Message):
     total_users = await db.total_users_count()
     total_grp = await GROUPS.estimated_document_count()
     await message.reply_text(
-        f"<b><i><u>Statistics Of @{BUN}</b></i></u> \n\n<b>Users:</b> <i>{total_users}</i> \n<b>Groups:</b> <i>{total_grp}</i>\n<b>Disk Space:</b> <i>{total}</i> \n<b>Disk Used:</b> <i>{used} | {disk_usage}%</i> \n<b>Disk Left:</b> <i>{free}</i> \n<b>CPU Usage:</b> <i>{cpu_usage}%</i> \n<b>RAM Usage:</b> <i>{ram_usage}% \n\n",
+        f"<b><i>• Statistics Of @{BUN}</b></i>\n\n<b>× Users:</b> <i>{total_users}</i> \n<b>× Groups:</b> <i>{total_grp}</i>\n<b>× Disk Space:</b> <i>{total}</i> \n<b>× Disk Used:</b> <i>{used} | {disk_usage}%</i> \n<b>× Disk Left:</b> <i>{free}</i> \n<b>× CPU Usage:</b> <i>{cpu_usage}%</i> \n<b>× RAM Usage:</b> <i>{ram_usage}% \n\n",
         quote=True
     )
 
 
-@Client.on_message(filters.private & filters.command("broadcast") & filters.user(OWNER) & filters.reply)
+@hellbot.on_message(filters.private & filters.command("broadcast") & filters.user(OWNER) & filters.reply)
 async def broadcast_handler_open(_, m: Message):
     await main_broadcast_handler(m, db, cast=True)
 
-@Client.on_message(filters.private & filters.command("fbroadcast") & filters.user(OWNER) & filters.reply)
+@hellbot.on_message(filters.private & filters.command("fbroadcast") & filters.user(OWNER) & filters.reply)
 async def broadcast_handler_open(_, m: Message):
     await main_broadcast_handler(m, db, cast=False)
 
-@Client.on_message(filters.command(["gcast"]))
+@hellbot.on_message(filters.command(["gcast"]))
 async def chatcast(_, message: Message):
     sent=0
     failed=0
@@ -66,26 +66,22 @@ async def chatcast(_, message: Message):
         await message.reply_text(f"<b><i><u>Globally Broadcasted !</b></i></u> \n\n<b>Sent to:</b> <i>{sent} Chats</i> \n<b>Failed in:</b> <i>{failed} Chats</i>")
 
 
-@Client.on_message(filters.private & filters.command("ban") & filters.user(OWNER))
-async def ban(c: Client, m: Message):
-    user_id, reason = await extract_user_and_reason(message)
+@hellbot.on_message(filters.private & filters.command("ban") & filters.user(OWNER))
+async def ban(c: hellbot, m: Message):
+    user_id, reason = await extract_user_and_reason(m)
     if not user_id:
-        return await message.reply_text("<b><i>Unable to find that user.</b></i>")
-    x = await hellbot.get_me()
+        return await m.reply_text("<b><i>Unable to find that user.</b></i>")
+    x = await c.get_me()
     BOT_ID = x.id
     if user_id == BOT_ID:
-        return await message.reply_text(
-            "<i>Haha!! Very funny.</i>"
-        )
-    if user_id in OWNER:
-        return await message.reply_text(
-            "<i><b>You joking right?</b></i>"
-        )
-    mention = (await hellbot.get_users(user_id)).mention
+        return await m.reply_text("<i>Haha!! Very funny.</i>")
+    if user_id == OWNER:
+        return await m.reply_text("<i><b>You joking right?</b></i>")
+    mention = (await c.get_users(user_id)).mention
     reason_ = reason or "Not Mentioned!"
     msg = (
         f"<b><i>Banned User:</b></i> {mention}\n"
-        f"<b><i>Banned By:</b></i> {message.from_user.mention if message.from_user else 'Anonymous'}\n"
+        f"<b><i>Banned By:</b></i> {m.from_user.mention if m.from_user else 'Anonymous'}\n"
         f"<b><i>Reason:</b></i> {reason_}"
     )
     try:
@@ -98,20 +94,18 @@ async def ban(c: Client, m: Message):
         await m.reply_text(f"<b><i>ERROR!!</b></i> \n\n<code>{str(e)}</code>")
 
 
-@Client.on_message(filters.private & filters.command("unban") & filters.user(OWNER))
-async def unban(c: Client, m: Message):
-    if len(message.command) == 2:
-        user_id = message.text.split(None, 1)[1]
-    elif len(message.command) == 1 and message.reply_to_message:
-        user_id = message.reply_to_message.from_user.id
+@hellbot.on_message(filters.private & filters.command("unban") & filters.user(OWNER))
+async def unban(c: hellbot, m: Message):
+    if len(m.command) == 2:
+        user_id = m.text.split(None, 1)[1]
+    elif len(m.command) == 1 and m.reply_to_message:
+        user_id = m.reply_to_message.from_user.id
     else:
-        return await message.reply_text(
-            "<b><i>Provide a username or reply to a user's message to unban.</b></i>"
-        )
-    mention = (await hellbot.get_users(user_id)).mention
+        return await m.reply_text("<b><i>Provide a username or reply to a user's message to unban.</b></i>")
+    mention = (await c.get_users(user_id)).mention
     msg = (
         f"<b><i>Unbanned User:</b></i> {mention}\n"
-        f"<b><i>Unbanned By:</b></i> {message.from_user.mention if message.from_user else 'Anonymous'}\n"
+        f"<b><i>Unbanned By:</b></i> {m.from_user.mention if m.from_user else 'Anonymous'}\n"
     )
     try:
         await db.remove_ban(user_id)
@@ -123,7 +117,7 @@ async def unban(c: Client, m: Message):
         await m.reply_text(f"<b><i>ERROR !!</b></i>\n\n<code>{str(e)}</code>")
 
 
-@Client.on_message(filters.private & filters.command("banlist") & filters.user(OWNER))
+@hellbot.on_message(filters.private & filters.command("banlist") & filters.user(OWNER))
 async def _banned_usrs(_, m: Message):
     all_banned_users = await db.get_all_banned_users()
     banned_usr_count = 0

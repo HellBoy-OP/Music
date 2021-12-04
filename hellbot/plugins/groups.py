@@ -5,15 +5,15 @@ from pyrogram.errors import UserAlreadyParticipant
 from ..helper.database.db import get_collections
 from ..helper.decorators import errors, authorized_users_only
 from ..helper.miscs import clog
-from .. import client as USER
+from .. import client as USER, hellbot
 from ..config import BOT_USERNAME as BUN
 
 GROUPS = get_collections("GROUPS")
 
-@Client.on_message(filters.group & filters.command(["join", f"join@{BUN}"]))
+@hellbot.on_message(filters.group & filters.command(["join", f"join@{BUN}"]))
 @authorized_users_only
 @errors
-async def addchannel(client, message):
+async def addchannel(client: hellbot, message: Message):
     gid = message.chat.id
     gidtype = message.chat.type
     if gidtype in ["supergroup", "group"] and not await (GROUPS.find_one({"id": gid})):
@@ -26,9 +26,7 @@ async def addchannel(client, message):
     try:
         invitelink = await client.export_chat_invite_link(gid)
     except:
-        await message.reply_text(
-            "<b><i>Make sure I'm admin bruh 😥</b></i>",
-        )
+        await message.reply_text("<b><i>Make sure I'm admin with invite users permission...😥</b></i>")
         return
     try:
         user = await USER.get_me()
@@ -38,21 +36,18 @@ async def addchannel(client, message):
         await USER.join_chat(invitelink)
         await USER.send_message(message.chat.id,"<b><i>Okay!! Let's start music now?</b></i>")
     except UserAlreadyParticipant:
-        await message.reply_text(
-            "<b><i>Already here 👀</b></i>",
-        )
+        await message.reply_text("<b><i>Already here 👀</b></i>")
         pass
     except Exception as e:
-        print(e)
+        print(str(e))
         await message.reply_text(f"<b><i>ERROR JOINING !!</b></i> \n\n<i>Maybe streaming account is banned here or we are facing flood wait issues due to heavy join requests. You can manually @{(await USER.get_me()).username} here.</i>")
         return
-    await message.reply_text(
-            "<b><i>Yeah! Why not...</b></i>")
+    await message.reply_text("<b><i>Yeah! Why not...</b></i>")
 
 
-@Client.on_message(filters.group & filters.command(["leave", f"leave@{BUN}"]))
+@hellbot.on_message(filters.group & filters.command(["leave", f"leave@{BUN}"]))
 @authorized_users_only
-async def botleavegrp(client, message):
+async def botleavegrp(client: hellbot, message: Message):
     gid = message.chat.id
     gidtype = message.chat.type
     if gidtype in ["supergroup", "group"] and not await (GROUPS.find_one({"id": gid})):
@@ -66,9 +61,9 @@ async def botleavegrp(client, message):
 
 
 @USER.on_message(filters.group & filters.command(["leave"]))
-async def strmleavegrp(USER, message):
+async def strmleavegrp(client: USER, message: Message):
     try:
-        await USER.leave_chat(message.chat.id)
+        await client.leave_chat(message.chat.id)
     except:
         await message.reply_text("<b><i>ERROR LEAVING !!!</i></b> \n\n<i>Unable to leave chat due to Floodwait Error. Remove me manually plox.</i>")
         return

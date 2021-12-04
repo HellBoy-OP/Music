@@ -1,28 +1,28 @@
 from typing import Dict
 
-from pytgcalls import GroupCall
+from pytgcalls import GroupCallFactory
 
-from .queue import get, is_empty, task_done
-from .. import client
+from ..helper import queue
+from .. import client, PyCalls
 
-instances: Dict[int, GroupCall] = {}
+instances: Dict[int, GroupCallFactory] = {}
 active_chats: Dict[int, Dict[str, bool]] = {}
 
 
 def init_instance(chat_id: int):
     if chat_id not in instances:
-        instances[chat_id] = GroupCall(client)
+        instances[chat_id] = PyCalls
     instance = instances[chat_id]
     @instance.on_playout_ended
     async def ___(__, _):
-        task_done(chat_id)
-        if is_empty(chat_id):
+        queue.task_done(chat_id)
+        if queue.is_empty(chat_id):
             await stop(chat_id)
         else:
-            instance.input_filename = get(chat_id)["file"]
+            instance.input_filename = queue.get(chat_id)["file"]
 
 
-def get_instance(chat_id: int) -> GroupCall:
+def get_instance(chat_id: int) -> GroupCallFactory:
     init_instance(chat_id)
     return instances[chat_id]
 
@@ -45,41 +45,41 @@ async def set_stream(chat_id: int, file: str):
     get_instance(chat_id).input_filename = file
 
 
-def pause(chat_id: int) -> bool:
+async def pause(chat_id: int) -> bool:
     if chat_id not in active_chats:
         return False
     elif not active_chats[chat_id]["playing"]:
         return False
-    get_instance(chat_id).pause_playout()
+    await get_instance(chat_id).pause_playout()
     active_chats[chat_id]["playing"] = False
     return True
 
 
-def resume(chat_id: int) -> bool:
+async def resume(chat_id: int) -> bool:
     if chat_id not in active_chats:
         return False
     elif active_chats[chat_id]["playing"]:
         return False
-    get_instance(chat_id).resume_playout()
+    await get_instance(chat_id).resume_playout()
     active_chats[chat_id]["playing"] = True
     return True
 
 
-def mute(chat_id: int) -> int:
+async def mute(chat_id: int) -> int:
     if chat_id not in active_chats:
         return 2
     elif active_chats[chat_id]["muted"]:
         return 1
-    get_instance(chat_id).set_is_mute(True)
+    await get_instance(chat_id).set_is_mute(True)
     active_chats[chat_id]["muted"] = True
     return 0
 
 
-def unmute(chat_id: int) -> int:
+async def unmute(chat_id: int) -> int:
     if chat_id not in active_chats:
         return 2
     elif not active_chats[chat_id]["muted"]:
         return 1
-    get_instance(chat_id).set_is_mute(False)
+    await get_instance(chat_id).set_is_mute(False)
     active_chats[chat_id]["muted"] = False
     return 0

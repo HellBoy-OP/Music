@@ -8,11 +8,12 @@ import subprocess
 from pyrogram import Client, filters
 from pyrogram.types import Message
 
+from .. import hellbot
 from ..config import OWNER, BOT_USERNAME as BUN
 
 
-@Client.on_message(filters.command(['eval', f'eval@{BUN}']) & filters.user(OWNER))
-async def eval_(client: Client, message: Message):
+@hellbot.on_message(filters.command(['eval', f'eval@{BUN}']) & filters.user(OWNER))
+async def eval_(client: hellbot, message: Message):
     status_message = await message.reply_text("Processing ...")
     cmd = message.text.split(" ", maxsplit=1)[1]
     reply_to_ = message
@@ -63,8 +64,8 @@ async def aexec(code, client, message):
     return await locals()["__aexec"](client, message)
 
 
-@Client.on_message(filters.user(OWNER) & filters.command(["term", f"term@{BUN}"]))
-async def terminal(client: Client, message: Message):
+@hellbot.on_message(filters.user(OWNER) & filters.command(["term", f"term@{BUN}"]))
+async def terminal(client: hellbot, message: Message):
     if len(message.text.split()) == 1:
         await message.reply_text("Usage: `/term echo owo`")
         return

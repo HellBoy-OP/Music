@@ -2,6 +2,7 @@ from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, Chat, CallbackQuery
 from functools import wraps
 
+from .. import hellbot
 from ..config import OWNER
 
 
@@ -28,7 +29,7 @@ OWNER_HELPCB = InlineKeyboardMarkup(
 )
 
 
-@Client.on_callback_query(filters.regex("cbowner"))
+@hellbot.on_callback_query(filters.regex("cbowner"))
 async def cbowner(_, query: CallbackQuery):
     await query.edit_message_text(
         text=f"""<b><i>Owner Commands:</b></i>
@@ -67,7 +68,7 @@ async def cbowner(_, query: CallbackQuery):
     )
 
 
-@Client.on_callback_query(filters.regex("cbownertools"))
+@hellbot.on_callback_query(filters.regex("cbownertools"))
 @owner_check
 async def cbtools(_, query: CallbackQuery):
     await query.edit_message_text(
@@ -90,7 +91,7 @@ async def cbtools(_, query: CallbackQuery):
     )
 
 
-@Client.on_callback_query(filters.regex("cbbans"))
+@hellbot.on_callback_query(filters.regex("cbbans"))
 @owner_check
 async def cbbans(_, query: CallbackQuery):
     await query.edit_message_text(
@@ -112,7 +113,7 @@ async def cbbans(_, query: CallbackQuery):
     )
 
 
-@Client.on_callback_query(filters.regex("cbunbans"))
+@hellbot.on_callback_query(filters.regex("cbunbans"))
 @owner_check
 async def cbunbans(_, query: CallbackQuery):
     await query.edit_message_text(
@@ -134,7 +135,7 @@ async def cbunbans(_, query: CallbackQuery):
     )
 
 
-@Client.on_callback_query(filters.regex("cbuserstats"))
+@hellbot.on_callback_query(filters.regex("cbuserstats"))
 @owner_check
 async def cbuserstats(_, query: CallbackQuery):
     await query.edit_message_text(
@@ -155,7 +156,7 @@ async def cbuserstats(_, query: CallbackQuery):
     )
 
 
-@Client.on_callback_query(filters.regex("cbbroadcast"))
+@hellbot.on_callback_query(filters.regex("cbbroadcast"))
 @owner_check
 async def cbbroadcast(_, query: CallbackQuery):
     await query.edit_message_text(
@@ -181,7 +182,7 @@ async def cbbroadcast(_, query: CallbackQuery):
     )
 
 
-@Client.on_message(filters.command("ownerpanel") & filters.user(OWNER) & ~filters.edited)
+@hellbot.on_message(filters.command("ownerpanel") & filters.user(OWNER) & ~filters.edited)
 async def modhelp(_, message: Message):
     txt = "<b><i>Hello!! This is Owner Panel. Some owner only commands are explained here as well.</b></i>"
     await message.reply_text(txt, reply_markup=OWNER_HELPCB)

@@ -1,10 +1,11 @@
-import json
+import json, wget
 
 from os import path
 from pyrogram import Client, filters
 from pyrogram.types import Message, Voice, InlineKeyboardMarkup, InlineKeyboardButton
 from youtube_search import YoutubeSearch
 
+from .. import arq, hellbot, client
 from ..config import DURATION_LIMIT, BOT_USERNAME as BUN, THUMB_URL
 from ..helper import pycalls, queue, converter, youtube
 from ..helper.database.db import get_collections
@@ -16,8 +17,8 @@ from ..helper.miscs import clog
 
 GROUPS = get_collections("GROUPS")
 
-@Client.on_message(filters.private)
-async def _(bot: Client, cmd: command):
+@hellbot.on_message(filters.private)
+async def _(bot: hellbot, cmd: command):
     await handle_user_status(bot, cmd)
 
 
@@ -32,14 +33,13 @@ btns = InlineKeyboardMarkup(
             InlineKeyboardButton("End ⏹", callback_data="cbend")
         ],
         [
-            InlineKeyboardButton("Mute 🔇", callback_data="cbmute"),
-            InlineKeyboardButton("Unmute 🔊", callback_data="cbunmute")
+            InlineKeyboardButton("Close 🗑️", callback_data="close")
         ]
     ]
 )
 
 
-@Client.on_message(command(["play", f"play@{BUN}"]) & grp_filters)
+@hellbot.on_message(command(["play", f"play@{BUN}"]) & grp_filters)
 @errors
 async def play(_, message: Message):
     gid = message.chat.id
@@ -79,6 +79,21 @@ async def play(_, message: Message):
                 not path.isfile(path.join("downloads", file_name))
             ) else file_name
         )
+    elif "-s" in qry[1][-2:]:
+        try:
+            song = await arq.saavn(qry[1])
+            if not song.ok:
+                return await message.reply_text(song.result)
+            title = song.result[0].song
+            link = song.result[0].media_url
+            duration = int(song.result[0].duration)
+            views = "Unknown"
+        except Exception as e:
+            await response.edit("<b><i>Unable to find that song.</b></i>")
+            print(str(e))
+            return
+        file = await converter.convert(wget.download(link))
+        is_yt = True
     else:
         await response.edit(f"<b><i>Searching “ {qry[1]} ” on Youtube...</i></b>", disable_web_page_preview=True)
         try:

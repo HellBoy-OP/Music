@@ -19,7 +19,6 @@ class Database:
             join_date=datetime.date.today().isoformat(),
             ban_status=dict(
                 is_banned=False,
-                ban_duration=0,
                 banned_on=datetime.date.max.isoformat(),
                 ban_reason=''
             )
