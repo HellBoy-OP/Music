@@ -7,6 +7,7 @@ git+https://github.com/HellBoy-OP/yt-fork
 gitpython
 html-telegraph-poster
 motor
+pillow
 psutil
 pyrogram
 pytgcalls==3.0.0.dev19

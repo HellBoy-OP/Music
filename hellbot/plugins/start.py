@@ -4,6 +4,7 @@ import time
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 
+from .. import hellbot
 from ..config import BOT_USERNAME as BUN, OWNER
 from ..helper.database.db import get_collections
 from ..helper.filters import command, commandpro
@@ -34,43 +35,34 @@ async def _human_time_duration(seconds):
     return ", ".join(parts)
 
 
-@Client.on_message(command("start") & filters.private & ~filters.edited)
-async def start_(client: Client, message: Message):
+@hellbot.on_message(command("start") & filters.private & ~filters.edited)
+async def start_(client: hellbot, message: Message):
     await message.reply_photo(
         photo=BOT_PIC,
         caption=f"<b><i>Hello there!! \nI'm a Telegram voice chat music player by @Its_Hellbot. Enjoy my advanced features along with a simple and sexy interface</b></i>",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton(
-                        "Add In Group 🦜",
-                        url=f"https://t.me/{BUN}?startgroup=true",
-                    )
+                    InlineKeyboardButton("Add In Group 🦜", url=f"https://t.me/{BUN}?startgroup=true")
                 ],
                 [
                     InlineKeyboardButton("Guide 📜", callback_data="cbhowtouse"),
                     InlineKeyboardButton("Commands 📌", callback_data="cbcmds"),
                 ],
                 [
-                    InlineKeyboardButton(
-                        "Channel 🍀", url=f"https://t.me/its_hellbot"
-                    ),
-                    InlineKeyboardButton(
-                        "Source Code", url="https://github.com/The-HellBot/Music"
-                    ),
+                    InlineKeyboardButton("Channel 🍀", url=f"https://t.me/its_hellbot"),
+                    InlineKeyboardButton("Source Code", url="https://github.com/The-HellBot/Music"),
                 ],
                 [
-                    InlineKeyboardButton(
-                        "Deployed By", url=f"tg://openmessage?user_id={OWNER}"
-                    )
+                    InlineKeyboardButton("Deployed By", url=f"tg://openmessage?user_id={OWNER}")
                 ]
            ]
         ),
     )
 
 
-@Client.on_message(commandpro(["/start", "/alive"]) & filters.group & ~filters.edited)
-async def start(client: Client, message: Message):
+@hellbot.on_message(commandpro(["/start", f"/start@{BUN}", "/alive"]) & filters.group & ~filters.edited)
+async def start(client: hellbot, message: Message):
     gid = message.chat.id
     gidtype = message.chat.type
     if gidtype in ["supergroup", "group"] and not await (GROUPS.find_one({"id": gid})):
@@ -83,8 +75,8 @@ async def start(client: Client, message: Message):
     await message.reply_photo(photo=BOT_PIC, caption=f"<b><i>🤠 Yo!! Wanna listen to some music now?</b></i>")
 
 
-@Client.on_message(command(["ping", f"ping@{BUN}"]) & ~filters.edited)
-async def ping(client: Client, message: Message):
+@hellbot.on_message(command(["ping", f"ping@{BUN}"]) & ~filters.edited)
+async def ping(client: hellbot, message: Message):
     gid = message.chat.id
     gidtype = message.chat.type
     if gidtype in ["supergroup", "group"] and not await (GROUPS.find_one({"id": gid})):
@@ -103,7 +95,7 @@ async def ping(client: Client, message: Message):
     await m_reply.edit_text(f"<b><i>• Pong!</b></i> <i>{_ping * 1000:.3f} ms</i> \n<b><i>• Uptime:</b></i> <code>{uptime}</code> \n")
 
 
-@Client.on_message(command(["id", f"id@{BUN}"]))
+@hellbot.on_message(command(["id", f"id@{BUN}"]))
 async def showid(_, message: Message):
     gid = message.chat.id
     gidtype = message.chat.type

@@ -269,7 +269,6 @@ async def saavn(_, message: Message):
             audio=audio,
             title=title,
             performer="[ †hê Hêllẞø† ]",
-            duration=duration,
         )
         await msg.delete()
     except Exception as e:

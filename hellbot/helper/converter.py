@@ -1,6 +1,9 @@
-from os import path
-import asyncio
+import asyncio, os, urllib.request
 
+from os import path
+from PIL import Image, ImageDraw, ImageFont
+
+from ..config import THUMB_URL
 from .errors import FFmpegReturnCodeError
 
 
@@ -27,3 +30,22 @@ async def convert(file_path: str) -> str:
         raise FFmpegReturnCodeError("FFmpeg did not return 0")
 
     return out
+
+
+async def thumbnail_convert(title, views, duration):
+    urllib.request.urlretrieve(THUMB_URL, "thmb.png")
+    image1 = Image.open("./thmb.png")
+    image2 = image1.convert("RGBA")
+    image3 = Image.open("./hellbot/helper/resources/border.png")
+    image4 = image3.resize(image1.size)
+    image5 = image4.convert("RGBA")
+    Image.alpha_composite(image2, image5).save("temp.png")
+    img = Image.open("temp.png")
+    draw = ImageDraw.Draw(img)
+    font = ImageFont.truetype("./hellbot/helper/resources/Aleo-Bold.otf", 70)
+    draw.text((230, 950), f"Title: {title}", (300, 300, 300), font=font)
+    draw.text((230, 1050), f"\nDuration: {duration}", (300, 300, 300), font=font)
+    draw.text((230, 1150), f"\nViews: {views}", (300, 300, 300), font=font)
+    img.save("final.png")
+    os.remove("temp.png")
+    os.remove("thmb.png")

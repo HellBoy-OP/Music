@@ -176,17 +176,21 @@ async def skip(_, message: Message):
             gidtitle = message.chat.title
         await GROUPS.insert_one({"id": gid, "grp": gidtitle})
         await clog("HELLBOT_MUSIC", f"Bot added to a new group\n\n{gidtitle}\nID: `{gid}`", "NEW_GROUP")
-    if message.chat.id not in pycalls.active_chats:
+    global que
+    if gid not in pycalls.active_chats:
         await message.reply_text("**❗ Nothing is playing !!**")
     else:
-        queue.task_done(message.chat.id)
-        if queue.is_empty(message.chat.id):
-            await pycalls.stop(message.chat.id)
+        queue.task_done(gid)
+        if queue.is_empty(gid):
+            await pycalls.stop(gid)
         else:
-            await pycalls.set_stream(
-                message.chat.id, queue.get(message.chat.id)["file"]
-            )
-        await message.reply_text(f"⏭ Skipped !!**")
+            await pycalls.set_stream(gid, queue.get(gid)["file"])
+    skipped = que.get(gid)
+    if skipped:
+        skipped.pop(0)
+    if not skipped:
+        return
+    await message.reply_text(f"**⏭ Skipped !!**")
 
 
 @hellbot.on_message(command(["mute", f"mute@{BUN}"]))

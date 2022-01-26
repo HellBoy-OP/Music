@@ -170,6 +170,10 @@ async def cdvc(_, query: CallbackQuery):
 <b>1. Command:</b> <code>/play</code>
 <b>    Usage:</b> <code>Plays the audio in voice chat. If replied to a audio file it'll be played else give a name/link to search and play it from Youtube.</code>
 <b>    Example:</b> <code>/play into your arms</code>
+
+<b>2. Command:</b> <code>/play query -s</code>
+<b>    Usage:</b> <code>Plays the requested song from Saavn.</code>
+<b>    Example:</b> <code>/play into your arms -s</code>
 """,
         reply_markup=InlineKeyboardMarkup(
             [
@@ -295,6 +299,10 @@ async def cbdwl(_, query: CallbackQuery):
 <b>2. Command:</b> <code>/video song name</code>
 <b>    Usage:</b> <code>Downloads requested video from YouTube.</code>
 <b>    Example:</b> <code>/video believer</code>
+
+<b>3. Command:</b> <code>/saavn song name</code>
+<b>    Usage:</b> <code>Downloads requested song from Saavn.</code>
+<b>    Example:</b> <code>/saavn closer</code>
 """,
         reply_markup=InlineKeyboardMarkup(
             [

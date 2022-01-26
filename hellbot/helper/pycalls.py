@@ -19,7 +19,16 @@ def init_instance(chat_id: int):
         if queue.is_empty(chat_id):
             await stop(chat_id)
         else:
-            instance.input_filename = queue.get(chat_id)["file"]
+            instance.input_filename = queue.get(chat_id)['file']
+
+
+def remove(chat_id: int):
+    if chat_id in instances:
+        del instances[chat_id]
+    if not queue.is_empty(chat_id):
+        queue.clear(chat_id)
+    if chat_id in active_chats:
+        del active_chats[chat_id]
 
 
 def get_instance(chat_id: int) -> GroupCallFactory:
@@ -29,12 +38,11 @@ def get_instance(chat_id: int) -> GroupCallFactory:
 
 async def start(chat_id: int):
     await get_instance(chat_id).start(chat_id)
-    active_chats[chat_id] = {"playing": True, "muted": False}
+    active_chats[chat_id] = {'playing': True, 'muted': False}
 
 
 async def stop(chat_id: int):
     await get_instance(chat_id).stop()
-
     if chat_id in active_chats:
         del active_chats[chat_id]
 
@@ -45,41 +53,41 @@ async def set_stream(chat_id: int, file: str):
     get_instance(chat_id).input_filename = file
 
 
-async def pause(chat_id: int) -> bool:
+def pause(chat_id: int) -> bool:
     if chat_id not in active_chats:
         return False
-    elif not active_chats[chat_id]["playing"]:
+    elif not active_chats[chat_id]['playing']:
         return False
-    await get_instance(chat_id).pause_playout()
-    active_chats[chat_id]["playing"] = False
+    get_instance(chat_id).pause_playout()
+    active_chats[chat_id]['playing'] = False
     return True
 
 
-async def resume(chat_id: int) -> bool:
+def resume(chat_id: int) -> bool:
     if chat_id not in active_chats:
         return False
-    elif active_chats[chat_id]["playing"]:
+    elif active_chats[chat_id]['playing']:
         return False
-    await get_instance(chat_id).resume_playout()
-    active_chats[chat_id]["playing"] = True
+    get_instance(chat_id).resume_playout()
+    active_chats[chat_id]['playing'] = True
     return True
 
 
-async def mute(chat_id: int) -> int:
+def mute(chat_id: int) -> int:
     if chat_id not in active_chats:
         return 2
-    elif active_chats[chat_id]["muted"]:
+    elif active_chats[chat_id]['muted']:
         return 1
-    await get_instance(chat_id).set_is_mute(True)
-    active_chats[chat_id]["muted"] = True
+    get_instance(chat_id).set_is_mute(True)
+    active_chats[chat_id]['muted'] = True
     return 0
 
 
-async def unmute(chat_id: int) -> int:
+def unmute(chat_id: int) -> int:
     if chat_id not in active_chats:
         return 2
-    elif not active_chats[chat_id]["muted"]:
+    elif not active_chats[chat_id]['muted']:
         return 1
-    await get_instance(chat_id).set_is_mute(False)
-    active_chats[chat_id]["muted"] = False
+    get_instance(chat_id).set_is_mute(False)
+    active_chats[chat_id]['muted'] = False
     return 0

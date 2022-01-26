@@ -1,12 +1,13 @@
-import json, wget
+import json, os, wget
 
 from os import path
 from pyrogram import Client, filters
 from pyrogram.types import Message, Voice, InlineKeyboardMarkup, InlineKeyboardButton
 from youtube_search import YoutubeSearch
 
+from . import que
 from .. import arq, hellbot, client
-from ..config import DURATION_LIMIT, BOT_USERNAME as BUN, THUMB_URL
+from ..config import DURATION_LIMIT, BOT_USERNAME as BUN
 from ..helper import pycalls, queue, converter, youtube
 from ..helper.database.db import get_collections
 from ..helper.database.dbhelpers import handle_user_status
@@ -79,20 +80,24 @@ async def play(_, message: Message):
                 not path.isfile(path.join("downloads", file_name))
             ) else file_name
         )
+        title = "Selected Audio File"
+        views = "Unknown"
+        duration = audio.duration
     elif "-s" in qry[1][-2:]:
         try:
-            song = await arq.saavn(qry[1])
+            await response.edit(f"<b><i>Searching “ {qry[1][:-2].strip()} ” on Saavn...</i></b>", disable_web_page_preview=True)
+            song = await arq.saavn(qry[1][:-2].strip())
             if not song.ok:
                 return await message.reply_text(song.result)
             title = song.result[0].song
-            link = song.result[0].media_url
+            url = song.result[0].media_url
             duration = int(song.result[0].duration)
             views = "Unknown"
         except Exception as e:
             await response.edit("<b><i>Unable to find that song.</b></i>")
             print(str(e))
             return
-        file = await converter.convert(wget.download(link))
+        file = await converter.convert(wget.download(url))
         is_yt = True
     else:
         await response.edit(f"<b><i>Searching “ {qry[1]} ” on Youtube...</i></b>", disable_web_page_preview=True)
@@ -107,33 +112,44 @@ async def play(_, message: Message):
             views = i['views']
         file = await converter.convert(youtube.download(url))
         is_yt = True
-    if message.chat.id in pycalls.active_chats:
-        position = await queue.put(message.chat.id, file=file)
+    await converter.thumbnail_convert(title, views, duration)
+    if gid in pycalls.active_chats:
+        position = await queue.put(gid, file=file)
+        queue_ = que.get(gid)
+        usr_id = message.from_user.id
+        things_ = [title, usr_id, file]
+        queue_.append(things_)
         await response.delete()
         if is_yt:
             await message.reply_photo(
-                photo=THUMB_URL,
+                photo="final.png",
                 caption=f"<b><i>• Song Name:</b></i> <a href='{url}'>{title}...</a> \n<b><i>• Duration:</b></i> <code>{duration}</code> \n<b><i>• Views:</b></i> <code>{views}</code> \n<b><i>• Requested By:</i></b> {user_} \n<b><i>• Status:</b></i> <code>#{position} in queue</code>",
                 reply_markup=btns,
             )
         else:
             await message.reply_photo(
-                photo=THUMB_URL,
+                photo="final.png",
                 caption=f"<b><i>Playing Selected File !!</b></i> \n<b><i>Requested By:</b></i> {user_} \n<b><i>• Status:</b></i> <code>#{position} in queue</code>",
                 reply_markup=btns,
             )
     else:
-        await pycalls.set_stream(message.chat.id, file=file)
+        que[gid] = []
+        queue_ = que.get(gid)
+        usr_id = message.from_user.id
+        things_ = [title, usr_id, file]
+        queue_.append(things_)
+        await pycalls.set_stream(gid, file=file)
         await response.delete()
         if is_yt:
             await message.reply_photo(
-                photo=THUMB_URL,
+                photo="final.png",
                 caption=f"<b><i>• Song Name:</b></i> <a href='{url}'>{title}...</a> \n<b><i>• Duration:</b></i> <code>{duration}</code> \n<b><i>• Views:</b></i> <code>{views}</code> \n<b><i>• Requested By:</i></b> {user_} \n<b><i>• Status:</b></i> <code>Started Playing</code>",
                 reply_markup=btns,
             )
         else:
             await message.reply_photo(
-                photo=THUMB_URL,
+                photo="final.png",
                 caption=f"<b><i>Playing Selected File !!</b></i> \n<b><i>Requested By:</b></i> {user_} \n<b><i>• Status:</b></i> <code>Started Playing</code>",
                 reply_markup=btns,
             )
+    os.remove("final.png")
