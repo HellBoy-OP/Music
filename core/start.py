@@ -49,7 +49,7 @@ async def start_(client: Client, message: Message):
                     ),
                     InlineKeyboardButton(
                         "🤯 sᴏᴜʀᴄᴇ ᴄᴏᴅᴇ​ 🤯",
-                        url="https://github.com/dominator454/Music_Bot",
+                        url="https://github.com/The-HellBot/Music",
                     ),
                 ],
             ]
