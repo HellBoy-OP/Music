@@ -42,7 +42,7 @@ async def help_cmd(client: Client, message: Message):
                     ),
                     InlineKeyboardButton(
                         "❄ sᴏᴜʀᴄᴇ ᴄᴏᴅᴇ​ ❄",
-                        url="https://github.com/dominator454/Music_Bot",
+                        url="https://github.com/The-HellBot/Music",
                     ),
                 ],
                 [InlineKeyboardButton("✨ ᴄʟᴏsᴇ ✨", callback_data="close_play")],
