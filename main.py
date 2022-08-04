@@ -20,8 +20,8 @@ from core import (
 
 REPO = """
 👨‍💻**Music Player**👨‍💻
-- Repo: [GitHub](https://github.com/dominator454/Music_Bot)
-- ⚜ [Owner](https://t.me/N1xDOMINATOR) ⚜
+- Repo: [GitHub](https://github.com/The-HellBot/Music)
+- ⚜ [Owner](https://t.me/ForGo10God) ⚜
 """
 
 if config.BOT_TOKEN:
