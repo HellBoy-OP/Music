@@ -33,7 +33,6 @@ async def start_(client: Client, message: Message):
         reply_markup=InlineKeyboardMarkup(
             buttons = [
                 [
-                [
                     InlineKeyboardButton(
                         "🥺 ᴀᴅᴅ ᴍᴇ ʙᴀʙʏ​ 🥺", url=f"https://t.me/{bu}?startgroup=true"
                     ),
