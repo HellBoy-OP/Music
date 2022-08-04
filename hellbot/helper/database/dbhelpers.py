@@ -1,15 +1,16 @@
 import os
 import time
-import string
 import random
-import datetime
-import aiofiles
+import string
 import asyncio
+import aiofiles
+import datetime
 import traceback
-from pyrogram.errors import FloodWait, InputUserDeactivated, UserIsBlocked, PeerIdInvalid
-
-from .db import db, Database, mdb_
+from .db import Database, db, mdb_
 from hellbot.config import LOGGER_ID
+from pyrogram.errors import (
+    FloodWait, PeerIdInvalid, UserIsBlocked, InputUserDeactivated)
+
 
 broadcast_ids = {}
 delcmdmdb = mdb_.admins
@@ -19,16 +20,20 @@ async def handle_user_status(bot, cmd):
     chat_id = cmd.chat.id
     if not await db.is_user_exist(chat_id):
         await db.add_user(chat_id)
-        await bot.send_message(LOGGER_ID, f"📌 #NEW_USER \n\n**User:** [{cmd.from_user.first_name}](tg://user?id={cmd.from_user.id}) \n**Id:** `{cmd.from_user.id}`")
+        await bot.send_message(
+            LOGGER_ID,
+            f"📌 #NEW_USER \n\n**User:** [{cmd.from_user.first_name}](tg://user?id={cmd.from_user.id}) \n**Id:** `{cmd.from_user.id}`",
+        )
 
     ban_status = await db.get_ban_status(chat_id)
     if ban_status["is_banned"]:
         if (
-                datetime.date.today() - datetime.date.fromisoformat(ban_status["banned_on"])
+            datetime.date.today() - datetime.date.fromisoformat(ban_status["banned_on"])
         ).days > ban_status["ban_duration"]:
             await db.remove_ban(chat_id)
         else:
-            await cmd.reply_text("**You are banned from using me!!**",
+            await cmd.reply_text(
+                "**You are banned from using me!!**",
                 quote=True,
             )
             return
@@ -59,7 +64,7 @@ async def main_broadcast_handler(m, db, cast):
     all_users = await db.get_all_users()
     broadcast_msg = m.reply_to_message
     while True:
-        broadcast_id = ''.join([random.choice(string.ascii_letters) for i in range(3)])
+        broadcast_id = "".join([random.choice(string.ascii_letters) for i in range(3)])
         if not broadcast_ids.get(broadcast_id):
             break
     out = await m.reply_text(
@@ -71,17 +76,12 @@ async def main_broadcast_handler(m, db, cast):
     failed = 0
     success = 0
     broadcast_ids[broadcast_id] = dict(
-        total=total_users,
-        current=done,
-        failed=failed,
-        success=success
+        total=total_users, current=done, failed=failed, success=success
     )
-    async with aiofiles.open('broadcast-logs.txt', 'w') as broadcast_log_file:
+    async with aiofiles.open("broadcast-logs.txt", "w") as broadcast_log_file:
         async for user in all_users:
             sts, msg = await send_msg(
-                user_id=int(user['id']),
-                message=broadcast_msg,
-                cast=cast
+                user_id=int(user["id"]), message=broadcast_msg, cast=cast
             )
             if msg is not None:
                 await broadcast_log_file.write(msg)
@@ -90,17 +90,13 @@ async def main_broadcast_handler(m, db, cast):
             else:
                 failed += 1
             if sts == 400:
-                await db.delete_user(user['id'])
+                await db.delete_user(user["id"])
             done += 1
             if broadcast_ids.get(broadcast_id) is None:
                 break
             else:
                 broadcast_ids[broadcast_id].update(
-                    dict(
-                        current=done,
-                        failed=failed,
-                        success=success
-                    )
+                    dict(current=done, failed=failed, success=success)
                 )
     if broadcast_ids.get(broadcast_id):
         broadcast_ids.pop(broadcast_id)
@@ -118,7 +114,7 @@ async def main_broadcast_handler(m, db, cast):
             caption=f"**💬 Broadcast Completed !!** \n\n__Time Taken:__ `{completed_in}` \n__Total users:__ `{total_users}` \n__Success:__ `{success}`\n__Failed:__ `{failed}`",
             quote=True,
         )
-    os.remove('broadcast-logs.txt')
+    os.remove("broadcast-logs.txt")
 
 
 async def delcmd_is_on(chat_id: int) -> bool:

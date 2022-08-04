@@ -1,31 +1,39 @@
-import time, os, math, asyncio, ffmpeg, json, requests, wget, yt_dlp
-
+import os
+import json
+import math
+import time
+import wget
+import ffmpeg
+import yt_dlp
+import asyncio
+import requests
+from .. import arq, hellbot
 from urllib.parse import urlparse
 from pyrogram import Client, filters
-from pyrogram.errors import FloodWait, MessageNotModified
-from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
-from youtubesearchpython import SearchVideos
 from youtube_search import YoutubeSearch
-
-from .. import arq, hellbot
+from youtubesearchpython import SearchVideos
 from ..helper.database.db import get_collections
-from ..helper.miscs import clog
-from ..config import BOT_USERNAME as BUN, THUMB_URL
-from ..helper.miscs import paste, capture_err
+from ..config import THUMB_URL, BOT_USERNAME as BUN
+from ..helper.miscs import clog, paste, capture_err
+from pyrogram.errors import FloodWait, MessageNotModified
+from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
+
 
 GROUPS = get_collections("GROUPS")
 is_downloading = False
 
+
 def humanbytes(size):
     if not size:
         return ""
-    power = 2 ** 10
+    power = 2**10
     raised_to_pow = 0
     dict_power_n = {0: "", 1: "Ki", 2: "Mi", 3: "Gi", 4: "Ti"}
     while size > power:
         size /= power
         raised_to_pow += 1
     return str(round(size, 2)) + " " + dict_power_n[raised_to_pow] + "B"
+
 
 def time_formatter(milliseconds: int) -> str:
     seconds, milliseconds = divmod(int(milliseconds), 1000)
@@ -40,6 +48,7 @@ def time_formatter(milliseconds: int) -> str:
         + ((str(milliseconds) + " millisecond(s), ") if milliseconds else "")
     )
     return tmp[:-2]
+
 
 async def progress(current, total, message, start, type_of_ps, file_name=None):
     now = time.time()
@@ -78,7 +87,7 @@ async def progress(current, total, message, start, type_of_ps, file_name=None):
                 pass
 
 
-@hellbot.on_message(filters.command(['song', f'song@{BUN}']))
+@hellbot.on_message(filters.command(["song", f"song@{BUN}"]))
 async def song(client: hellbot, message: Message):
     gid = message.chat.id
     gidtype = message.chat.type
@@ -88,7 +97,11 @@ async def song(client: hellbot, message: Message):
         except KeyError:
             gidtitle = message.chat.title
         await GROUPS.insert_one({"id": gid, "grp": gidtitle})
-        await clog("HELLBOT_MUSIC", f"Bot added to a new group\n\n{gidtitle}\nID: `{gid}`", "NEW_GROUP")
+        await clog(
+            "HELLBOT_MUSIC",
+            f"Bot added to a new group\n\n{gidtitle}\nID: `{gid}`",
+            "NEW_GROUP",
+        )
     user_ = f"[{message.from_user.first_name}](tg://user?id={message.from_user.id})"
     qry = message.text
     query = qry.split(" ", 1)
@@ -99,11 +112,11 @@ async def song(client: hellbot, message: Message):
     try:
         results = YoutubeSearch(query[1], max_results=1).to_dict()
         link = f"https://youtube.com{results[0]['url_suffix']}"
-        title = results[0]["title"][:40]       
+        title = results[0]["title"][:40]
         thumbnail = results[0]["thumbnails"][0]
-        thumb_name = f'thumb{title}.jpg'
+        thumb_name = f"thumb{title}.jpg"
         thumb = requests.get(thumbnail, allow_redirects=True)
-        open(thumb_name, 'wb').write(thumb.content)
+        open(thumb_name, "wb").write(thumb.content)
         duration = results[0]["duration"]
         url_suffix = results[0]["url_suffix"]
         views = results[0]["views"]
@@ -119,12 +132,19 @@ async def song(client: hellbot, message: Message):
             audio_file = ydl.prepare_filename(info_dict)
             ydl.process_info(info_dict)
         rep = f"<b><i>Title:</b></i> <a href='{link}'>{title[:35]}</a> \n<b><i>Duration:</b></i> <code>{duration}</code> \n<b><i>Views:</b></i> <code>{views}</code> \n\n<b><i>For:</b></i> {user_}"
-        secmul, dur, dur_arr = 1, 0, duration.split(':')
-        for i in range(len(dur_arr)-1, -1, -1):
-            dur += (int(dur_arr[i]) * secmul)
+        secmul, dur, dur_arr = 1, 0, duration.split(":")
+        for i in range(len(dur_arr) - 1, -1, -1):
+            dur += int(dur_arr[i]) * secmul
             secmul *= 60
 
-        await message.reply_audio(audio_file, caption=rep, thumb=thumb_name, performer="[ †hê Hêllẞø† ]", title=title, duration=dur)
+        await message.reply_audio(
+            audio_file,
+            caption=rep,
+            thumb=thumb_name,
+            performer="[ †hê Hêllẞø† ]",
+            title=title,
+            duration=dur,
+        )
 
         await m.delete()
     except Exception as e:
@@ -146,7 +166,11 @@ async def lyrics_func(_, message: Message):
         except KeyError:
             gidtitle = message.chat.title
         await GROUPS.insert_one({"id": gid, "grp": gidtitle})
-        await clog("HELLBOT_MUSIC", f"Bot added to a new group\n\n{gidtitle}\nID: `{gid}`", "NEW_GROUP")
+        await clog(
+            "HELLBOT_MUSIC",
+            f"Bot added to a new group\n\n{gidtitle}\nID: `{gid}`",
+            "NEW_GROUP",
+        )
     qry = message.text
     query = qry.split(" ", 1)
     if len(query) == 1:
@@ -159,7 +183,9 @@ async def lyrics_func(_, message: Message):
         await m.edit(f"__{lyrics}__")
         return
     lyrics = await paste(lyrics)
-    await m.edit(f"<b><i>Lyrics was too long. Paste it <a href='{lyrics}'>here</a>.</b></i>")
+    await m.edit(
+        f"<b><i>Lyrics was too long. Paste it <a href='{lyrics}'>here</a>.</b></i>"
+    )
 
 
 @hellbot.on_message(filters.command(["video", "vsong", f"video@{BUN}", f"vsong@{BUN}"]))
@@ -172,15 +198,23 @@ async def ytmusic(client: hellbot, message: Message):
         except KeyError:
             gidtitle = message.chat.title
         await GROUPS.insert_one({"id": gid, "grp": gidtitle})
-        await clog("HELLBOT_MUSIC", f"Bot added to a new group\n\n{gidtitle}\nID: `{gid}`", "NEW_GROUP")
+        await clog(
+            "HELLBOT_MUSIC",
+            f"Bot added to a new group\n\n{gidtitle}\nID: `{gid}`",
+            "NEW_GROUP",
+        )
     qry = message.text
     query = qry.split(" ", 1)
     global is_downloading
     if is_downloading:
-        await message.reply_text("<b><i>I'm already downloading another video, try again later...</b></i>")
+        await message.reply_text(
+            "<b><i>I'm already downloading another video, try again later...</b></i>"
+        )
         return
     if len(query) == 1:
-        return await message.reply_text("<b><i>Mind giving what I should search?</i></b>")
+        return await message.reply_text(
+            "<b><i>Mind giving what I should search?</i></b>"
+        )
     pablo = await message.reply_text(f"<b><i>Searching {query[1]} ...</b></i>")
     search = SearchVideos(f"{query[1]}", offset=1, mode="dict", max_results=1)
     mi = search.result()
@@ -223,7 +257,9 @@ async def ytmusic(client: hellbot, message: Message):
         return
     c_time = time.time()
     file_ = f"{ytdl_data['id']}.mp4"
-    YTVID_BUTTONS = InlineKeyboardMarkup([[InlineKeyboardButton("Watch on YT 📺", url=f"{mo}")]])
+    YTVID_BUTTONS = InlineKeyboardMarkup(
+        [[InlineKeyboardButton("Watch on YT 📺", url=f"{mo}")]]
+    )
     capy = f"<b><i>Video Name:</b></i> <code>{thum}</code>"
     await client.send_video(
         message.chat.id,
@@ -248,7 +284,8 @@ async def ytmusic(client: hellbot, message: Message):
         if files and os.path.exists(files):
             os.remove(files)
 
-@hellbot.on_message(filters.command(['saavn', f"saavn@{BUN}"]))
+
+@hellbot.on_message(filters.command(["saavn", f"saavn@{BUN}"]))
 async def saavn(_, message: Message):
     if len(message.command) < 2:
         return await message.reply_text("<b><i>Nothing was given to download.</b></i>")
@@ -275,7 +312,7 @@ async def saavn(_, message: Message):
         return await msg.edit(str(e))
 
 
-@hellbot.on_message(filters.command(['search', f'search@{BUN}']))
+@hellbot.on_message(filters.command(["search", f"search@{BUN}"]))
 async def search(client: hellbot, message: Message):
     gid = message.chat.id
     gidtype = message.chat.type
@@ -285,7 +322,11 @@ async def search(client: hellbot, message: Message):
         except KeyError:
             gidtitle = message.chat.title
         await GROUPS.insert_one({"id": gid, "grp": gidtitle})
-        await clog("HELLBOT_MUSIC", f"Bot added to a new group\n\n{gidtitle}\nID: `{gid}`", "NEW_GROUP")
+        await clog(
+            "HELLBOT_MUSIC",
+            f"Bot added to a new group\n\n{gidtitle}\nID: `{gid}`",
+            "NEW_GROUP",
+        )
     if len(message.command) < 2:
         await message.reply_text("<b><i>Give something to search plis..</b></i>")
         return
@@ -298,5 +339,5 @@ async def search(client: hellbot, message: Message):
     output = f"<b><i><u>Search Query:</b></i></u> <code>{query}</code>\n\n<b><i>Results:</b></i>\n\n"
     for i in results["videos"]:
         url = f"https://www.youtube.com{i['url_suffix']}"
-        output += (f"• <a href='{url}'>{i['title']}</a>\n\n")
+        output += f"• <a href='{url}'>{i['title']}</a>\n\n"
     await m.edit(output, disable_web_page_preview=True)

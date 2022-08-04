@@ -1,7 +1,7 @@
 import os
-
 from pyrogram import Client
 from dotenv import load_dotenv
+
 
 load_dotenv()
 
@@ -19,4 +19,6 @@ HELLBOT_SESSION = os.environ.get("HELLBOT_SESSION", None)
 LOGGER_ID = int(os.environ.get("LOGGER_ID"))
 OWNER = int(os.environ.get("OWNER"))
 SUDO_USERS = list(map(int, os.environ.get("SUDO_USERS").split()))
-THUMB_URL = os.environ.get("THUMBNAIL", "https://te.legra.ph/file/2a24a198476d4abf505da.jpg")
+THUMB_URL = os.environ.get(
+    "THUMBNAIL", "https://te.legra.ph/file/2a24a198476d4abf505da.jpg"
+)

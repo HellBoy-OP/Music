@@ -1,14 +1,12 @@
-import datetime
 import time
-
-from pyrogram import Client, filters
-from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
-
+import datetime
 from .. import hellbot
-from ..config import BOT_USERNAME as BUN, OWNER
+from pyrogram import Client, filters
+from ..helper.miscs import clog, get_file_id
+from ..config import OWNER, BOT_USERNAME as BUN
 from ..helper.database.db import get_collections
 from ..helper.filters import command, commandpro
-from ..helper.miscs import clog, get_file_id
+from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
 
 
 GROUPS = get_collections("GROUPS")
@@ -43,7 +41,9 @@ async def start_(client: hellbot, message: Message):
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("Add In Group 🦜", url=f"https://t.me/{BUN}?startgroup=true")
+                    InlineKeyboardButton(
+                        "Add In Group 🦜", url=f"https://t.me/{BUN}?startgroup=true"
+                    )
                 ],
                 [
                     InlineKeyboardButton("Guide 📜", callback_data="cbhowtouse"),
@@ -51,17 +51,23 @@ async def start_(client: hellbot, message: Message):
                 ],
                 [
                     InlineKeyboardButton("Channel 🍀", url=f"https://t.me/its_hellbot"),
-                    InlineKeyboardButton("Source Code", url="https://github.com/The-HellBot/Music"),
+                    InlineKeyboardButton(
+                        "Source Code", url="https://github.com/The-HellBot/Music"
+                    ),
                 ],
                 [
-                    InlineKeyboardButton("Deployed By", url=f"tg://openmessage?user_id={OWNER}")
-                ]
-           ]
+                    InlineKeyboardButton(
+                        "Deployed By", url=f"tg://openmessage?user_id={OWNER}"
+                    )
+                ],
+            ]
         ),
     )
 
 
-@hellbot.on_message(commandpro(["/start", f"/start@{BUN}", "/alive"]) & filters.group & ~filters.edited)
+@hellbot.on_message(
+    commandpro(["/start", f"/start@{BUN}", "/alive"]) & filters.group & ~filters.edited
+)
 async def start(client: hellbot, message: Message):
     gid = message.chat.id
     gidtype = message.chat.type
@@ -71,8 +77,14 @@ async def start(client: hellbot, message: Message):
         except KeyError:
             gidtitle = message.chat.title
         await GROUPS.insert_one({"id": gid, "grp": gidtitle})
-        await clog("HELLBOT_MUSIC", f"Bot added to a new group\n\n{gidtitle}\nID: `{gid}`", "NEW_GROUP")
-    await message.reply_photo(photo=BOT_PIC, caption=f"<b><i>🤠 Yo!! Wanna listen to some music now?</b></i>")
+        await clog(
+            "HELLBOT_MUSIC",
+            f"Bot added to a new group\n\n{gidtitle}\nID: `{gid}`",
+            "NEW_GROUP",
+        )
+    await message.reply_photo(
+        photo=BOT_PIC, caption=f"<b><i>🤠 Yo!! Wanna listen to some music now?</b></i>"
+    )
 
 
 @hellbot.on_message(command(["ping", f"ping@{BUN}"]) & ~filters.edited)
@@ -85,14 +97,20 @@ async def ping(client: hellbot, message: Message):
         except KeyError:
             gidtitle = message.chat.title
         await GROUPS.insert_one({"id": gid, "grp": gidtitle})
-        await clog("HELLBOT_MUSIC", f"Bot added to a new group\n\n{gidtitle}\nID: `{gid}`", "NEW_GROUP")
+        await clog(
+            "HELLBOT_MUSIC",
+            f"Bot added to a new group\n\n{gidtitle}\nID: `{gid}`",
+            "NEW_GROUP",
+        )
     start = time.time()
     m_reply = await message.reply_text("<b><i>Pong!</b></i>")
     _ping = time.time() - start
     current_time = datetime.datetime.utcnow()
     uptime_sec = (current_time - START_TIME).total_seconds()
     uptime = await _human_time_duration(int(uptime_sec))
-    await m_reply.edit_text(f"<b><i>• Pong!</b></i> <i>{_ping * 1000:.3f} ms</i> \n<b><i>• Uptime:</b></i> <code>{uptime}</code> \n")
+    await m_reply.edit_text(
+        f"<b><i>• Pong!</b></i> <i>{_ping * 1000:.3f} ms</i> \n<b><i>• Uptime:</b></i> <code>{uptime}</code> \n"
+    )
 
 
 @hellbot.on_message(command(["id", f"id@{BUN}"]))
@@ -105,7 +123,11 @@ async def showid(_, message: Message):
         except KeyError:
             gidtitle = message.chat.title
         await GROUPS.insert_one({"id": gid, "grp": gidtitle})
-        await clog("HELLBOT_MUSIC", f"Bot added to a new group\n\n{gidtitle}\nID: `{gid}`", "NEW_GROUP")
+        await clog(
+            "HELLBOT_MUSIC",
+            f"Bot added to a new group\n\n{gidtitle}\nID: `{gid}`",
+            "NEW_GROUP",
+        )
     if gidtype == "private":
         user_id = message.chat.id
         await message.reply_text(f"<b><i>Your ID:</b></i> <code>{user_id}</code>")

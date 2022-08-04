@@ -1,9 +1,9 @@
-from pyrogram import Client, filters
-from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, Chat, CallbackQuery
-from functools import wraps
-
 from .. import hellbot
 from ..config import OWNER
+from functools import wraps
+from pyrogram import Client, filters
+from pyrogram.types import (
+    Chat, Message, CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup)
 
 
 def owner_check(func):
@@ -14,17 +14,14 @@ def owner_check(func):
         else:
             await query.answer("Hmm yes? This is for owner only (⊙_◎)", show_alert=True)
             return
+
     return okvai
 
 
 OWNER_HELPCB = InlineKeyboardMarkup(
     [
-        [
-            InlineKeyboardButton("Tools 🔧", callback_data="cbownertools")
-        ],
-        [
-            InlineKeyboardButton("Help Menu 📜", callback_data="cbcmd")
-        ]
+        [InlineKeyboardButton("Tools 🔧", callback_data="cbownertools")],
+        [InlineKeyboardButton("Help Menu 📜", callback_data="cbcmd")],
     ]
 )
 
@@ -59,12 +56,8 @@ async def cbowner(_, query: CallbackQuery):
 <b>    Example:</b> <code>/term echo Hello World</code>
 """,
         reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton("Back 🔙", callback_data="cbcmd")
-                ]
-            ]
-        )
+            [[InlineKeyboardButton("Back 🔙", callback_data="cbcmd")]]
+        ),
     )
 
 
@@ -77,17 +70,15 @@ async def cbtools(_, query: CallbackQuery):
             [
                 [
                     InlineKeyboardButton("Bans ⛔", callback_data="cbbans"),
-                    InlineKeyboardButton("Unbans 🍀", callback_data="cbunbans")
+                    InlineKeyboardButton("Unbans 🍀", callback_data="cbunbans"),
                 ],
                 [
                     InlineKeyboardButton("Stats 📊", callback_data="cbuserstats"),
-                    InlineKeyboardButton("Broadcast 💬", callback_data="cbbroadcast")
+                    InlineKeyboardButton("Broadcast 💬", callback_data="cbbroadcast"),
                 ],
-                [
-                    InlineKeyboardButton("Close 🗑️", callback_data="close")
-                ],
+                [InlineKeyboardButton("Close 🗑️", callback_data="close")],
             ]
-        )
+        ),
     )
 
 
@@ -102,14 +93,8 @@ async def cbbans(_, query: CallbackQuery):
 <b><i>Example:</b></i> <code>/ban 69696969 nice</code>
 """,
         reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton(
-                        "Menu 🔙", callback_data="cbownertools"
-                    )
-                ]
-            ]
-        )
+            [[InlineKeyboardButton("Menu 🔙", callback_data="cbownertools")]]
+        ),
     )
 
 
@@ -124,14 +109,8 @@ async def cbunbans(_, query: CallbackQuery):
 <b><i>Example:</b></i> <code>/unban 6969696</code>
 """,
         reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton(
-                        "Menu 🔙", callback_data="cbownertools"
-                    )
-                ]
-            ]
-        )
+            [[InlineKeyboardButton("Menu 🔙", callback_data="cbownertools")]]
+        ),
     )
 
 
@@ -145,14 +124,8 @@ async def cbuserstats(_, query: CallbackQuery):
 <b><i>Command:</b></i> <code>/stats</code>
 """,
         reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton(
-                        "Menu 🔙", callback_data="cbownertools"
-                    )
-                ]
-            ]
-        )
+            [[InlineKeyboardButton("Menu 🔙", callback_data="cbownertools")]]
+        ),
     )
 
 
@@ -171,18 +144,14 @@ async def cbbroadcast(_, query: CallbackQuery):
 <b><i>Command:</b></i> <code>/gcast (reply to a message)</code> [Broadcast from assistant account.]
 """,
         reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton(
-                        "Menu 🔙", callback_data="cbownertools"
-                    )
-                ]
-            ]
-        )
+            [[InlineKeyboardButton("Menu 🔙", callback_data="cbownertools")]]
+        ),
     )
 
 
-@hellbot.on_message(filters.command("ownerpanel") & filters.user(OWNER) & ~filters.edited)
+@hellbot.on_message(
+    filters.command("ownerpanel") & filters.user(OWNER) & ~filters.edited
+)
 async def modhelp(_, message: Message):
     txt = "<b><i>Hello!! This is Owner Panel. Some owner only commands are explained here as well.</b></i>"
     await message.reply_text(txt, reply_markup=OWNER_HELPCB)

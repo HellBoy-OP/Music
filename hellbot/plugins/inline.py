@@ -1,12 +1,8 @@
-from pyrogram import Client, errors
-from pyrogram.types import (
-    InlineQuery,
-    InlineQueryResultArticle,
-    InputTextMessageContent,
-)
-from youtubesearchpython import VideosSearch
-
 from .. import hellbot
+from pyrogram import Client, errors
+from youtubesearchpython import VideosSearch
+from pyrogram.types import (
+    InlineQuery, InputTextMessageContent, InlineQueryResultArticle)
 
 
 @hellbot.on_inline_query()
@@ -27,8 +23,12 @@ async def inline(client: hellbot, query: InlineQuery):
             answers.append(
                 InlineQueryResultArticle(
                     title=result["title"],
-                    description="{}, {}.".format(result["duration"], result["viewCount"]["short"]),
-                    input_message_content=InputTextMessageContent("https://www.youtube.com/watch?v={}".format(result["id"])),
+                    description="{}, {}.".format(
+                        result["duration"], result["viewCount"]["short"]
+                    ),
+                    input_message_content=InputTextMessageContent(
+                        "https://www.youtube.com/watch?v={}".format(result["id"])
+                    ),
                     thumb_url=result["thumbnails"][0]["url"],
                 )
             )

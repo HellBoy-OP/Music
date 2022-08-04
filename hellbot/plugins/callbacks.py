@@ -1,13 +1,13 @@
-from pyrogram import Client, filters
-from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, Chat, CallbackQuery
 from functools import wraps
-
-from .. import hellbot
-from ..helper.admins import get_admins
-from ..helper.database.db import get_collections
 from ..helper.miscs import clog
-from .. import client as USER
-from ..config import BOT_USERNAME as BUN, OWNER
+from pyrogram import Client, filters
+from .. import client as USER, hellbot
+from ..helper.admins import get_admins
+from ..config import OWNER, BOT_USERNAME as BUN
+from ..helper.database.db import get_collections
+from pyrogram.types import (
+    Chat, Message, CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup)
+
 
 BOT_PIC = "https://te.legra.ph/file/2a24a198476d4abf505da.jpg"
 
@@ -23,8 +23,11 @@ def admin_check(func):
         elif query.from_user.id in admeme:
             return await func(hellbot, query)
         else:
-            await query.answer("Hmm yes? This is for admins only (⊙_◎)", show_alert=True)
+            await query.answer(
+                "Hmm yes? This is for admins only (⊙_◎)", show_alert=True
+            )
             return
+
     return okvai
 
 
@@ -41,21 +44,19 @@ async def cbback(_, query: CallbackQuery):
             [
                 [
                     InlineKeyboardButton("Pause ⏸", callback_data="cbpause"),
-                    InlineKeyboardButton("Resume ▶️", callback_data="cbresume")
+                    InlineKeyboardButton("Resume ▶️", callback_data="cbresume"),
                 ],
                 [
                     InlineKeyboardButton("Skip ⏩", callback_data="cbskip"),
-                    InlineKeyboardButton("End ⏹", callback_data="cbend")
+                    InlineKeyboardButton("End ⏹", callback_data="cbend"),
                 ],
                 [
                     InlineKeyboardButton("Mute 🔇", callback_data="cbmute"),
-                    InlineKeyboardButton("Unmute 🔊", callback_data="cbunmute")
+                    InlineKeyboardButton("Unmute 🔊", callback_data="cbunmute"),
                 ],
-                [
-                    InlineKeyboardButton("Close 🗑️", callback_data="close")
-                ]
+                [InlineKeyboardButton("Close 🗑️", callback_data="close")],
             ]
-        )
+        ),
     )
 
 
@@ -66,21 +67,27 @@ async def cbstart(_, query: CallbackQuery):
         reply_markup=InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("Add in group 🦜", url=f"https://t.me/{BUN}?startgroup=true")
+                    InlineKeyboardButton(
+                        "Add in group 🦜", url=f"https://t.me/{BUN}?startgroup=true"
+                    )
                 ],
                 [
                     InlineKeyboardButton("Guide 📜", callback_data="cbhowtouse"),
-                    InlineKeyboardButton("Commands 📌", callback_data="cbcmds")
+                    InlineKeyboardButton("Commands 📌", callback_data="cbcmds"),
                 ],
                 [
                     InlineKeyboardButton("Channel 🍀", url="https://t.me/its_hellbot"),
-                    InlineKeyboardButton("Source Code", url="https://github.com/The-HellBot/Music")
+                    InlineKeyboardButton(
+                        "Source Code", url="https://github.com/The-HellBot/Music"
+                    ),
                 ],
                 [
-                    InlineKeyboardButton("Deployed By", url=f"tg://openmessage?user_id={OWNER}")
+                    InlineKeyboardButton(
+                        "Deployed By", url=f"tg://openmessage?user_id={OWNER}"
+                    )
                 ],
             ]
-        )
+        ),
     )
 
 
@@ -89,7 +96,9 @@ async def cbhelpmenu(_, query: CallbackQuery):
     await query.edit_message_text(
         text=f"""<b><i>Hello there {query.message.from_user.mention} 😉️!</b></i>
 <i>Here is the help menu and some basic guide:</i>""",
-        reply_markup=InlineKeyboardMarkup([InlineKeyboardButton("How to use ❓", callback_data="cbhowtouse")])
+        reply_markup=InlineKeyboardMarkup(
+            [InlineKeyboardButton("How to use ❓", callback_data="cbhowtouse")]
+        ),
     )
 
 
@@ -100,14 +109,10 @@ async def cbhowtouse(client: hellbot, query: CallbackQuery):
         text=f"<b><i>How to use me?</b></i>\n\n<b>Step 1:</b> <i>Add me( @{BUN} ) and @{(await USER.get_me()).username} in your group or just add me and send /join for automatic joining process.</i>\n<b>Step 2:</b> <i>Promote me ( @{BUN} ) and @{(await USER.get_me()).username} with atleast Manage Voice Chat rights.</i>\n\n<i>Done! You are good to go. Now see my command menu to get details of commands I support.</i>\n\n<b><i>By:</b></i> @Its_HellBot",
         reply_markup=InlineKeyboardMarkup(
             [
-                [
-                    InlineKeyboardButton("Commands 📌", callback_data="cbcmds")
-                ],
-                [
-                    InlineKeyboardButton("Close 🗑️", callback_data="close")
-                ],
+                [InlineKeyboardButton("Commands 📌", callback_data="cbcmds")],
+                [InlineKeyboardButton("Close 🗑️", callback_data="close")],
             ]
-        )
+        ),
     )
 
 
@@ -120,18 +125,18 @@ async def cbcmds(client: hellbot, query: CallbackQuery):
             [
                 [
                     InlineKeyboardButton("Admin & Sudo", callback_data="cbadmins"),
-                    InlineKeyboardButton("Owner", callback_data="cbowner")
+                    InlineKeyboardButton("Owner", callback_data="cbowner"),
                 ],
                 [
                     InlineKeyboardButton("Downloads", callback_data="cbdwl"),
-                    InlineKeyboardButton("Extras", callback_data="cbextras")
+                    InlineKeyboardButton("Extras", callback_data="cbextras"),
                 ],
                 [
                     InlineKeyboardButton("Voice Chat", callback_data="cbvc"),
-                    InlineKeyboardButton("Others", callback_data="cbothers")
+                    InlineKeyboardButton("Others", callback_data="cbothers"),
                 ],
             ]
-        )
+        ),
     )
 
 
@@ -143,21 +148,19 @@ async def cbcmds(client: hellbot, query: CallbackQuery):
             [
                 [
                     InlineKeyboardButton("Admin & Sudo", callback_data="cbadmins"),
-                    InlineKeyboardButton("Owner", callback_data="cbowner")
+                    InlineKeyboardButton("Owner", callback_data="cbowner"),
                 ],
                 [
                     InlineKeyboardButton("Downloads", callback_data="cbdwl"),
-                    InlineKeyboardButton("Extras", callback_data="cbextras")
+                    InlineKeyboardButton("Extras", callback_data="cbextras"),
                 ],
                 [
                     InlineKeyboardButton("Voice Chat", callback_data="cbvc"),
-                    InlineKeyboardButton("Others", callback_data="cbothers")
+                    InlineKeyboardButton("Others", callback_data="cbothers"),
                 ],
-                [
-                    InlineKeyboardButton("Close", callback_data="close")
-                ],
+                [InlineKeyboardButton("Close", callback_data="close")],
             ]
-        )
+        ),
     )
 
 
@@ -176,12 +179,8 @@ async def cdvc(_, query: CallbackQuery):
 <b>    Example:</b> <code>/play into your arms -s</code>
 """,
         reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton("Back 🔙", callback_data="cbcmd")
-                ]
-            ]
-        )
+            [[InlineKeyboardButton("Back 🔙", callback_data="cbcmd")]]
+        ),
     )
 
 
@@ -239,12 +238,8 @@ async def cbadmins(_, query: CallbackQuery):
 <b>    Example:</b> <code>/leave</code>
 """,
         reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton("Back 🔙", callback_data="cbcmd")
-                ]
-            ]
-        )
+            [[InlineKeyboardButton("Back 🔙", callback_data="cbcmd")]]
+        ),
     )
 
 
@@ -277,12 +272,8 @@ async def cbothers(_, query: CallbackQuery):
 <b>    Example:</b> <code>/id</code>
 """,
         reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton("Back 🔙", callback_data="cbcmd")
-                ]
-            ]
-        )
+            [[InlineKeyboardButton("Back 🔙", callback_data="cbcmd")]]
+        ),
     )
 
 
@@ -305,12 +296,8 @@ async def cbdwl(_, query: CallbackQuery):
 <b>    Example:</b> <code>/saavn closer</code>
 """,
         reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton("Back 🔙", callback_data="cbcmd")
-                ]
-            ]
-        )
+            [[InlineKeyboardButton("Back 🔙", callback_data="cbcmd")]]
+        ),
     )
 
 
@@ -340,10 +327,6 @@ async def quotly(_, query: CallbackQuery):
 <b>    Example:</b> <code>/lyrics perfect</code>
 """,
         reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton("Back 🔙", callback_data="cbcmd")
-                ]
-            ]
-        )
+            [[InlineKeyboardButton("Back 🔙", callback_data="cbcmd")]]
+        ),
     )

@@ -1,10 +1,13 @@
-from typing import List, Dict, Union
+from typing import Dict, List, Union
 from pyrogram.types import Chat, User, Message
+
 
 admins: Dict[int, List[int]] = {}
 
+
 def set_ad(chat_id: int, admins_: List[int]):
     admins[chat_id] = admins_
+
 
 def get_ad(chat_id: int) -> Union[List[int], bool]:
     if chat_id in admins:
@@ -34,6 +37,7 @@ async def extract_userid(message, text: str):
         except ValueError:
             return False
         return True
+
     text = text.strip()
     if is_int(text):
         return int(text)

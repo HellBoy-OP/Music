@@ -1,10 +1,10 @@
-import asyncio, os, urllib.request
-
+import os
+import asyncio
 from os import path
-from PIL import Image, ImageDraw, ImageFont
-
+import urllib.request
 from ..config import THUMB_URL
 from .errors import FFmpegReturnCodeError
+from PIL import Image, ImageDraw, ImageFont
 
 
 async def convert(file_path: str) -> str:
@@ -21,7 +21,7 @@ async def convert(file_path: str) -> str:
     proc = await asyncio.create_subprocess_shell(
         f"ffmpeg -y -i {file_path} -f s16le -ac 2 -ar 48000 -acodec pcm_s16le {out}",
         asyncio.subprocess.PIPE,
-        stderr=asyncio.subprocess.PIPE
+        stderr=asyncio.subprocess.PIPE,
     )
 
     await proc.communicate()

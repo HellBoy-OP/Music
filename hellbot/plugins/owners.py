@@ -1,18 +1,17 @@
 import os
-import asyncio
-import shutil
 import psutil
-
-from pyrogram import Client, filters
-from pyrogram.types import Message
-
-from .. import client as cli, hellbot
-from ..helper.database.db import db, get_collections
-from ..helper.database.dbhelpers import main_broadcast_handler
-from ..helper.admins import extract_user_and_reason
-from ..helper.miscs import telegraph_paste
+import shutil
+import asyncio
 from .youtube import humanbytes
-from ..config import BOT_USERNAME as BUN, OWNER, SUDO_USERS
+from pyrogram.types import Message
+from pyrogram import Client, filters
+from .. import client as cli, hellbot
+from ..helper.miscs import telegraph_paste
+from ..helper.admins import extract_user_and_reason
+from ..helper.database.db import db, get_collections
+from ..config import OWNER, SUDO_USERS, BOT_USERNAME as BUN
+from ..helper.database.dbhelpers import main_broadcast_handler
+
 
 GROUPS = get_collections("GROUPS")
 
@@ -25,27 +24,36 @@ async def botstats(_, message: Message):
     free = humanbytes(free)
     cpu_usage = psutil.cpu_percent()
     ram_usage = psutil.virtual_memory().percent
-    disk_usage = psutil.disk_usage('/').percent
+    disk_usage = psutil.disk_usage("/").percent
     total_users = await db.total_users_count()
     total_grp = await GROUPS.estimated_document_count()
     await message.reply_text(
         f"<b><i>• Statistics Of @{BUN}</b></i>\n\n<b>× Users:</b> <i>{total_users}</i> \n<b>× Groups:</b> <i>{total_grp}</i>\n<b>× Disk Space:</b> <i>{total}</i> \n<b>× Disk Used:</b> <i>{used} | {disk_usage}%</i> \n<b>× Disk Left:</b> <i>{free}</i> \n<b>× CPU Usage:</b> <i>{cpu_usage}%</i> \n<b>× RAM Usage:</b> <i>{ram_usage}% \n\n",
-        quote=True
+        quote=True,
     )
 
 
-@hellbot.on_message(filters.private & filters.command("broadcast") & filters.user(OWNER) & filters.reply)
+@hellbot.on_message(
+    filters.private & filters.command("broadcast") & filters.user(OWNER) & filters.reply
+)
 async def broadcast_handler_open(_, m: Message):
     await main_broadcast_handler(m, db, cast=True)
 
-@hellbot.on_message(filters.private & filters.command("fbroadcast") & filters.user(OWNER) & filters.reply)
+
+@hellbot.on_message(
+    filters.private
+    & filters.command("fbroadcast")
+    & filters.user(OWNER)
+    & filters.reply
+)
 async def broadcast_handler_open(_, m: Message):
     await main_broadcast_handler(m, db, cast=False)
 
+
 @hellbot.on_message(filters.command(["gcast"]))
 async def chatcast(_, message: Message):
-    sent=0
-    failed=0
+    sent = 0
+    failed = 0
     if message.from_user.id not in SUDO_USERS:
         return
     else:
@@ -58,12 +66,18 @@ async def chatcast(_, message: Message):
             try:
                 await cli.send_message(dialog.chat.id, rply)
                 sent = sent + 1
-                await hell.edit(f"<b><i><u>Globally Broadcasting !</b></i></u>\n\n<b>Sent to:</b> <i>{sent} Chats</i> \n<b>Failed in:</b> <i>{failed} Chats</i>")
-            except:
-                failed=failed+1
-                await hell.edit(f"<b><i><u>Globally Broadcasting !</b></i></u>\n\n<b>Sent to:</b> <i>{sent} Chats</i> \n<b>Failed in:</b> <i>{failed} Chats</i>")
+                await hell.edit(
+                    f"<b><i><u>Globally Broadcasting !</b></i></u>\n\n<b>Sent to:</b> <i>{sent} Chats</i> \n<b>Failed in:</b> <i>{failed} Chats</i>"
+                )
+            except BaseException:
+                failed = failed + 1
+                await hell.edit(
+                    f"<b><i><u>Globally Broadcasting !</b></i></u>\n\n<b>Sent to:</b> <i>{sent} Chats</i> \n<b>Failed in:</b> <i>{failed} Chats</i>"
+                )
             await asyncio.sleep(3)
-        await message.reply_text(f"<b><i><u>Globally Broadcasted !</b></i></u> \n\n<b>Sent to:</b> <i>{sent} Chats</i> \n<b>Failed in:</b> <i>{failed} Chats</i>")
+        await message.reply_text(
+            f"<b><i><u>Globally Broadcasted !</b></i></u> \n\n<b>Sent to:</b> <i>{sent} Chats</i> \n<b>Failed in:</b> <i>{failed} Chats</i>"
+        )
 
 
 @hellbot.on_message(filters.private & filters.command("ban") & filters.user(OWNER))
@@ -86,10 +100,7 @@ async def ban(c: hellbot, m: Message):
     )
     try:
         await db.ban_user(user_id=user_id, ban_reason=reason_)
-        await m.reply_text(
-            msg,
-            quote=True
-        )
+        await m.reply_text(msg, quote=True)
     except Exception as e:
         await m.reply_text(f"<b><i>ERROR!!</b></i> \n\n<code>{str(e)}</code>")
 
@@ -101,7 +112,9 @@ async def unban(c: hellbot, m: Message):
     elif len(m.command) == 1 and m.reply_to_message:
         user_id = m.reply_to_message.from_user.id
     else:
-        return await m.reply_text("<b><i>Provide a username or reply to a user's message to unban.</b></i>")
+        return await m.reply_text(
+            "<b><i>Provide a username or reply to a user's message to unban.</b></i>"
+        )
     mention = (await c.get_users(user_id)).mention
     msg = (
         f"<b><i>Unbanned User:</b></i> {mention}\n"
@@ -109,10 +122,7 @@ async def unban(c: hellbot, m: Message):
     )
     try:
         await db.remove_ban(user_id)
-        await m.reply_text(
-            msg,
-            quote=True
-        )
+        await m.reply_text(msg, quote=True)
     except Exception as e:
         await m.reply_text(f"<b><i>ERROR !!</b></i>\n\n<code>{str(e)}</code>")
 
@@ -121,17 +131,22 @@ async def unban(c: hellbot, m: Message):
 async def _banned_usrs(_, m: Message):
     all_banned_users = await db.get_all_banned_users()
     banned_usr_count = 0
-    text = ''
+    text = ""
     async for banned_user in all_banned_users:
-        user_id = banned_user['id']
-        banned_on = banned_user['ban_status']['banned_on']
-        ban_reason = banned_user['ban_status']['ban_reason']
+        user_id = banned_user["id"]
+        banned_on = banned_user["ban_status"]["banned_on"]
+        ban_reason = banned_user["ban_status"]["ban_reason"]
         banned_usr_count += 1
         text += f"• <b><i>User ID:</b></i> <code>{user_id}</code>\n  <b><i>Banned Date:</b></i> <code>{banned_on}</code> \n<b><i>  Reason:</b></i> <code>{ban_reason}</code> \n\n"
-    reply_text = f"<b><i><u>Banned Users:</b></i></u> <code>{banned_usr_count}</code>\n\n{text}"
+    reply_text = (
+        f"<b><i><u>Banned Users:</b></i></u> <code>{banned_usr_count}</code>\n\n{text}"
+    )
     button = []
     if len(reply_text) > 4096:
         paste = await telegraph_paste("Banned Users List", reply_text)
         button.append([InlineKeyboardButton(text="Banned Users List", url=paste)])
-        await m.reply_text(f"<b><i>Message was too long. Open Banned Users List from below.", reply_markup=InlineKeyboardMarkup(button))
+        await m.reply_text(
+            f"<b><i>Message was too long. Open Banned Users List from below.",
+            reply_markup=InlineKeyboardMarkup(button),
+        )
     await m.reply_text(reply_text)

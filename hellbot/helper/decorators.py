@@ -1,9 +1,8 @@
-from typing import Callable
 from pyrogram import Client
-from pyrogram.types import Message, CallbackQuery
-
+from typing import Callable
 from .admins import get_admins
 from ..config import SUDO_USERS
+from pyrogram.types import Message, CallbackQuery
 
 
 def errors(func: Callable) -> Callable:

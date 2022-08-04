@@ -1,8 +1,6 @@
 import asyncio
-
 from pyrogram import idle
-
-from . import hellbot, client
+from . import client, hellbot
 from .config import LOGGER_ID
 
 
@@ -11,7 +9,9 @@ async def startup():
     print("••• HellBot Music Starting •••")
     await client.start()
     await hellbot.start()
-    await hellbot.send_message(LOGGER_ID, "#START \n\n<b><i>HellBot Music Started Successfully!!</b></i>")
+    await hellbot.send_message(
+        LOGGER_ID, "#START \n\n<b><i>HellBot Music Started Successfully!!</b></i>"
+    )
     print("••• HellBot Music Started •••")
     await idle()
 
