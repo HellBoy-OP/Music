@@ -1,1 +1,1 @@
-worker: python3 -m hellbot
+worker: bash startup.sh
