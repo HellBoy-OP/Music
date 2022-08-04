@@ -65,8 +65,8 @@ Command | Description
 en    English
 ```
 ## Thanks to
-*[Dominator](https://github.com/dominator454/NIXA-MUSIC-BOT)
-+[Me](https://github.com/The-HellBot/HellBot)
+•[Dominator](https://github.com/dominator454/NIXA-MUSIC-BOT)
+•[Me](https://github.com/The-HellBot/HellBot)
 ## 📃 <a name="license"></a>License
 
 Music Player is licenced under the GNU Affero General Public License v3.0.
