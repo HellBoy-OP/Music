@@ -1,8 +1,6 @@
 import sys
-
-from pyrogram import Client
-
 from config import Config
+from pyrogram import Client
 from HellMusic.core.logging import LOGS
 
 
@@ -28,8 +26,10 @@ class MusicBot(Client):
             )
             self.name = f"{get_bot.first_name} {get_bot.last_name or ''}"
             LOGS.info(f"[{self.name}]: Hell-Music Bot Started Successfully !!")
-        except:
-            LOGS.error("[LOGGER_ID]: Invalid logger channel found. Please re-check LOGGER_ID !")
+        except BaseException:
+            LOGS.error(
+                "[LOGGER_ID]: Invalid logger channel found. Please re-check LOGGER_ID !"
+            )
             sys.exit()
 
 
@@ -51,7 +51,7 @@ class MusicClient(Client):
         try:
             await self.join_chat("Its_HellBot")
             await self.join_chat("https://t.me/+bZxlmdNFp1NjMDNh")
-        except:
+        except BaseException:
             pass
         try:
             await self.send_message(
@@ -60,6 +60,8 @@ class MusicClient(Client):
             )
             self.name = f"{get_bot.first_name} {get_bot.last_name or ''}"
             LOGS.info(f"[{self.name}]: Hell-Music Bot Started Successfully !!")
-        except:
-            LOGS.error("[LOGGER_ID]: Invalid logger channel found. Please re-check LOGGER_ID !")
+        except BaseException:
+            LOGS.error(
+                "[LOGGER_ID]: Invalid logger channel found. Please re-check LOGGER_ID !"
+            )
             sys.exit()
