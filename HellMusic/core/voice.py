@@ -1,11 +1,10 @@
 import sys
 from config import Config
 from pyrogram import Client
+from HellMusic.core.logging import LOGS
 from pytgcalls import PyTgCalls, StreamType
 from pytgcalls.types.input_stream import AudioPiped, AudioVideoPiped
 from pytgcalls.exceptions import NoActiveGroupCall, AlreadyJoinedError
-
-from HellMusic.core.logging import LOGS
 
 
 class HellVoice(PyTgCalls):
