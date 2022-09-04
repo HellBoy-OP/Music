@@ -1,4 +1,5 @@
-from HellMusic import bot, client, hell
+from HellMusic import bot, hell, client
+
 
 async def startup():
     pass
