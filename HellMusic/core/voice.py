@@ -1,9 +1,9 @@
 import sys
+from config import Config
 from pyrogram import Client
 from pytgcalls import PyTgCalls, StreamType
-from pytgcalls.exceptions import AlreadyJoinedError, NoActiveGroupCall 
 from pytgcalls.types.input_stream import AudioPiped, AudioVideoPiped
-from config import Config
+from pytgcalls.exceptions import NoActiveGroupCall, AlreadyJoinedError
 
 
 class HellVoice(PyTgCalls):
@@ -177,4 +177,3 @@ class HellVoice(PyTgCalls):
             except Exception as e:
                 LOGS.error(str(e))
                 return str(e)
-
