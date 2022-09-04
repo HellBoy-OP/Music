@@ -6,4 +6,5 @@ from HellMusic.core.bot import MusicBot, MusicClient
 bot = MusicBot()
 client = MusicClient()
 hell = HellVoice()
-helldb = HellMongoDB()
+helldb = HellMongoDB().get_db
+get_collections = HellMongoDB().get_collections
