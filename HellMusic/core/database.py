@@ -1,10 +1,9 @@
+from config import Config
 from motor.core import AgnosticCollection
 from motor.motor_asyncio import AsyncIOMotorClient as MongoClient
 
-from config import Config
 
-
-class HellMongoDB():
+class HellMongoDB:
     def __init__(self):
         DB_URI = Config.DB_URI
 
