@@ -7,7 +7,7 @@ class HellMongoDB:
     def __init__(self):
         DB_URI = Config.DB_URI
 
-    async def get_db(self):
+    def get_db(self):
         mongo_client = MongoClient(self.DB_URI)
         db = mongo_client.HellMusic
         return db
