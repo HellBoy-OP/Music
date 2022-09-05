@@ -1,8 +1,7 @@
+import sys
 import glob
 import importlib
-import sys
 from pathlib import Path
-
 from HellMusic.core.logging import LOGS
 
 
