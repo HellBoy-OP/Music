@@ -20,6 +20,10 @@ async def startup():
     await client.start()
     await hell.start()
 
+    if Config.DB_URI:
+        LOGS.info("••• Database Url Found •••")
+        await helldb.get_db()
+
     LOGS.info(DEPLOYED.format(__version__.version))
     await idle()
     LOGS.info("••• Hell-Music Stopped •••")
