@@ -2,7 +2,7 @@ import logging
 
 
 logging.basicConfig(
-    format="[%(levelname)s- %(asctime)s]- %(name)s- %(message)s",
+    format="[%(asctime)s]:[%(levelname)s]:[%(name)s]:: %(message)s",
     level=logging.INFO,
     datefmt="%H:%M:%S",
 )
@@ -10,4 +10,4 @@ logging.basicConfig(
 logging.getLogger("pyrogram").setLevel(logging.ERROR)
 logging.getLogger("pytgcalls").setLevel(logging.ERROR)
 
-LOGS = logging.getLogger(__name__)
+LOGS = logging.getLogger("HellMusic")

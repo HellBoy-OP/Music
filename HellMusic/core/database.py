@@ -12,6 +12,6 @@ class HellMongoDB:
         db = mongo_client.HellMusic
         return db
 
-    def get_collections(self, name: str) -> AgnosticCollection:
+    async def get_collections(self, name: str) -> AgnosticCollection:
         db = await self.get_db()
         return db[name]

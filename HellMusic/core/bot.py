@@ -24,13 +24,11 @@ class MusicBot(Client):
                 Config.LOGGER_ID,
                 "#START #BOT \n\n__Hell-Music Bot Started Successfully !!__",
             )
-            self.name = f"{get_bot.first_name} {get_bot.last_name or ''}"
-            LOGS.info(f"[{self.name}]: Hell-Music Bot Started Successfully !!")
-        except BaseException:
-            LOGS.error(
-                "[LOGGER_ID]: Invalid logger channel found. Please re-check LOGGER_ID !"
-            )
-            sys.exit()
+        except Exception as e:
+            LOGS.error(str(e))
+            # sys.exit()
+        self.name = get_bot.first_name
+        LOGS.info(f"[{self.name}]: Hell-Music Bot Started Successfully !!")
 
 
 class MusicClient(Client):
@@ -38,7 +36,7 @@ class MusicClient(Client):
         super().__init__(
             api_id=Config.API_ID,
             api_hash=Config.API_HASH,
-            session_name=str(Config.HELLBOT_SESSSION),
+            session_name=str(Config.HELLBOT_SESSION),
             no_updates=True,
         )
 
@@ -58,10 +56,8 @@ class MusicClient(Client):
                 Config.LOGGER_ID,
                 "#START #CLIENT \n\n__Hell-Music Client Started Successfully !!__",
             )
-            self.name = f"{get_bot.first_name} {get_bot.last_name or ''}"
-            LOGS.info(f"[{self.name}]: Hell-Music Bot Started Successfully !!")
-        except BaseException:
-            LOGS.error(
-                "[LOGGER_ID]: Invalid logger channel found. Please re-check LOGGER_ID !"
-            )
-            sys.exit()
+        except Exception as e:
+            LOGS.error(str(e))
+            # sys.exit()
+        self.name = get_bot.first_name
+        LOGS.info(f"[{self.name}]: Hell-Music Bot Started Successfully !!")

@@ -8,6 +8,9 @@ from HellMusic.core.plugins import load_plugins
 from HellMusic import bot, hell, client, helldb, __version__
 
 
+loop = asyncio.get_event_loop()
+
+
 async def startup():
     if not Config.HELLBOT_SESSION:
         LOGS.error("[HELLBOT_SESSION]: Not a valid session!")
@@ -26,7 +29,8 @@ async def startup():
 
     LOGS.info(DEPLOYED.format(__version__.version))
     await idle()
+
+
+if __name__ == "__main__":
+    loop.run_until_complete(startup())
     LOGS.info("••• Hell-Music Stopped •••")
-
-
-asyncio.run(startup())
