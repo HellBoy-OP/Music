@@ -1,13 +1,12 @@
-import asyncio
 import sys
-
+import asyncio
 from config import Config
 from pyrogram import idle
-from HellMusic import bot, hell, client, helldb
 from HellMusic.core.logging import LOGS
-from HellMusic.core.plugins import load_plugins
 from HellMusic.helpers.text import DEPLOYED
-from HellMusic import __version__
+from HellMusic.core.plugins import load_plugins
+from HellMusic import bot, hell, client, helldb, __version__
+
 
 async def startup():
     if not Config.HELLBOT_SESSION:
