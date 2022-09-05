@@ -11,5 +11,6 @@ class Config(object):
     HEROKU_APP = environ.get("HEROKU_APP", None)
     HELLBOT_SESSION = environ.get("HELLBOT_SESSION", None)
     TMP_DIR = environ.get("TMP_DIR", "./DOWNLOADS/")
+    TRIGGERS = environ.get("TRIGGERS", "/ !").split()
 
     # Soon
