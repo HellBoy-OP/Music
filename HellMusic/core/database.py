@@ -5,7 +5,7 @@ from motor.motor_asyncio import AsyncIOMotorClient as MongoClient
 
 class HellMongoDB:
     def __init__(self):
-        DB_URI = Config.DB_URI
+        self.DB_URI = Config.DB_URI
 
     def get_db(self):
         mongo_client = MongoClient(self.DB_URI)
@@ -13,4 +13,5 @@ class HellMongoDB:
         return db
 
     def get_collections(self, name: str) -> AgnosticCollection:
+        db = get_db()
         return db[name]
