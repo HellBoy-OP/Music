@@ -7,7 +7,8 @@ from config import Config
 from pyrogram import filters
 from lyricsgenius import Genius
 from pykeyboard import InlineKeyboard
-from HellMusic import BOT_UN, bot, trg
+from HellMusic import bot, trg
+from HellMusic.plugins import BOT_UN
 from HellMusic.core.logging import LOGS
 from HellMusic.helpers.tools import runcmd
 from HellMusic.helpers.client import client_id
