@@ -1,9 +1,11 @@
 import io
+import os
 import re
 import sys
 import traceback
 import subprocess
 from pyrogram import filters
+from pyrogram.types import Message
 from HellMusic.plugins import BOT_UN
 from HellMusic import SUDO_USERS, bot, trg
 from HellMusic.core.client import client_id
