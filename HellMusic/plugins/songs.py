@@ -10,7 +10,7 @@ from lyricsgenius import Genius
 from HellMusic.plugins import BOT_UN
 from pykeyboard import InlineKeyboard
 from HellMusic.core.logging import LOGS
-from HellMusic.helpers.tools import runcmd
+from HellMusic.helpers.tools import runcmd, absolute_paths
 from HellMusic.helpers.client import client_id
 from HellMusic.helpers.youtube import Hell_YTS
 from HellMusic.helpers.error import parse_error
