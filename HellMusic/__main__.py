@@ -19,9 +19,9 @@ async def startup():
     LOGS.info("••• Music Bot Startup •••")
 
     await bot.start()
-    await load_plugins()
     await client.start()
     await hell.start()
+    await load_plugins()
 
     if Config.DB_URI:
         LOGS.info("••• Database Url Found •••")

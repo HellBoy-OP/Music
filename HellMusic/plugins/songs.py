@@ -16,24 +16,23 @@ from HellMusic.helpers.error import parse_error
 from HellMusic.helpers.paste import telegraph_paste
 from HellMusic.helpers.text import CAPTION, PERFORMER
 from HellMusic.helpers.tools import runcmd, absolute_paths
-from pyrogram.types import (
-    Message, InputMediaAudio, InputMediaVideo, InlineKeyboardButton,
-    InlineKeyboardMarkup)
+from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
 
 
 @bot.on_message(
     filters.command(["song", f"song@{BOT_UN}"], prefixes=trg) & ~filters.edited
 )
 async def songs(bot, message: Message):
+    hell = await message.reply_text("Processing ...")
     lists = message.text.split(" ", 1)
     if len(lists) != 2:
-        return await parse_error(message, "Nothing given to search.")
+        return await parse_error(hell, "Nothing given to search.")
     reply = message.reply_to_message
     hell_id, _, hell_mention = await client_id(message)
     query = lists[1].strip()
     if not query:
-        return await parse_error(message, "Nothing given to search.")
-    hell = await message.reply_text(f"<b><i>Searching</i></b> “ `{query}` ”")
+        return await parse_error(hell, "Nothing given to search.")
+    await hell.edit(f"<b><i>Searching</i></b> “ `{query}` ”")
     ydl_opts = {"format": "bestaudio[ext=m4a]"}
     try:
         results = Hell_YTS(query, max_results=1).to_dict()
@@ -58,22 +57,20 @@ async def songs(bot, message: Message):
         await hell.edit(
             f"**••• Uploading Song •••** \n\n__» {info_dict['title']}__\n__»» {info_dict['uploader']}__"
         )
-        audio = InputMediaAudio(
-            media=audio_file,
-            thumb=thumb_name,
+        await message.reply_audio(
+            audio=audio_file,
             caption=CAPTION.format(
                 "Song", info_dict["title"], views, duration, hell_mention
             ),
             duration=int(info_dict["duration"]),
             performer=PERFORMER,
             title=info_dict["title"],
+            thumb=thumb_name,
         )
-        await message.reply_audio(audio)
         await hell.delete()
         try:
             os.remove(audio_file)
             os.remove(thumb_name)
-            os.remove(audio)
         except BaseException:
             pass
     except Exception as e:
@@ -84,15 +81,16 @@ async def songs(bot, message: Message):
     filters.command(["video", f"video@{BOT_UN}"], prefixes=trg) & ~filters.edited
 )
 async def videos(bot, message: Message):
+    hell = await message.reply_text("Processing ...")
     lists = message.text.split(" ", 1)
     if len(lists) != 2:
-        return await parse_error(message, "Nothing given to search.")
+        return await parse_error(hell, "Nothing given to search.")
     reply = message.reply_to_message
     hell_id, _, hell_mention = await client_id(message)
     query = lists[1].strip()
     if not query:
-        return await parse_error(message, "Nothing given to search.")
-    hell = await message.reply_text(f"<b><i>Searching</i></b> “ `{query}` ”")
+        return await parse_error(hell, "Nothing given to search.")
+    await hell.edit(f"<b><i>Searching</i></b> “ `{query}` ”")
     ydl_opts = {
         "format": "best",
         "addmetadata": True,
@@ -127,22 +125,18 @@ async def videos(bot, message: Message):
         await hell.edit(
             f"**••• Uploading Video •••** \n\n__» {vid_file['title']}__\n__»» {vid_file['uploader']}__"
         )
-        video = InputMediaVideo(
-            media=file_,
-            thumb=thumb_name,
+        await message.reply_video(
+            video=file_,
             caption=CAPTION.format(
                 "Video", vid_file["title"], views, duration, hell_mention
             ),
             duration=int(vid_file["duration"]),
-            performer=PERFORMER,
-            title=vid_file["title"],
+            supports_streaming=True,
         )
-        await message.reply_video(video)
         await hell.delete()
         try:
             os.remove(file_)
             os.remove(thumb_name)
-            os.remove(video)
         except BaseException:
             pass
     except Exception as e:
@@ -153,11 +147,16 @@ async def videos(bot, message: Message):
     filters.command(["lyrics", f"lyrics@{BOT_UN}"], prefixes=trg) & ~filters.edited
 )
 async def lyrics(bot, message: Message):
+    hell = await message.reply_text("Processing ...")
     if not Config.LYRICS_API:
-        return await parse_error(message, "`LYRICS_API` is not configured!", False)
-    lists = event.text.split(" ", 1)
+        return await parse_error(hell, "`LYRICS_API` is not configured!", False)
+    lists = message.text.split(" ", 1)
     if not len(lists) == 2:
-        return await parse_error(message, "Nothing given to search.")
+        return await parse_error(
+            hell,
+            "__Nothing given to search.__ \nExample: `/lyrics loose yourself - eminem`",
+            False,
+        )
     _input_ = lists[1].strip()
     query = _input_.split("-", 1)
     if len(query) == 2:
@@ -169,7 +168,7 @@ async def lyrics(bot, message: Message):
     text = f"**Searching lyrics ...** \n\n__Song:__ `{song}`"
     if artist != "":
         text += f"\n__Artist:__ `{artist}`"
-    hell = await message.reply_text(text)
+    await hell.edit(text)
     LyClient = Genius(Config.LYRICS_API)
     results = LyClient.search_song(song, artist)
     if results:
@@ -196,14 +195,15 @@ async def lyrics(bot, message: Message):
     filters.command(["spotify", f"spotify@{BOT_UN}"], prefixes=trg) & ~filters.edited
 )
 async def spotify(bot, message: Message):
+    hell = await message.reply_text("Processing ...")
     hell_id, _, hell_mention = await client_id(message)
     reply = message.reply_to_message
     dirs = "./spotify/"
     lists = message.text.split(" ", 1)
     if not len(lists) == 2:
-        return await parse_error(message, "Nothing given to search on spotify.")
+        return await parse_error(hell, "Nothing given to search on spotify.")
     query = lists[1].strip()
-    hell = await message.reply_text(f"__Downloading__ `{query}` __from spotify ...__")
+    await hell.edit(f"__Downloading__ `{query}` __from spotify ...__")
     cmd = (
         f"spotdl '{query}' --path-template 'spotify"
         + "/{artist}/{album}/{artist} - {title}.{ext}'"
@@ -218,12 +218,11 @@ async def spotify(bot, message: Message):
         return
     for music in dldirs:
         try:
-            audio = InputMediaAudio(
-                media=music,
+            await message.reply_audio(
+                audio=music,
                 caption=f"**✘ Spotify Song Downloaded !!** \n\n**« ✘ »** {hell_mention}",
                 performer=PERFORMER,
             )
-            await message.reply_audio(audio)
         except Exception as e:
             LOGS.error(str(e))
     try:

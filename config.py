@@ -7,6 +7,7 @@ class Config(object):
     BOT_TOKEN = environ.get("BOT_TOKEN", None)
     DB_URI = environ.get("MONGO_URL", None)
     LOGGER_ID = environ.get("LOGGER_ID", 0)
+    LYRICS_API = environ.get("LYRICS_API", None)
     HEROKU_API = environ.get("HEROKU_API", None)
     HEROKU_APP = environ.get("HEROKU_APP", None)
     HELLBOT_SESSION = environ.get("HELLBOT_SESSION", None)

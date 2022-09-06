@@ -6,6 +6,7 @@ ffmpeg-python
 gitpython
 hachoir
 heroku3
+html-telegraph-poster
 lyricsgenius
 motor
 pillow
@@ -17,6 +18,7 @@ python-dotenv
 pytube
 pyyaml==5.3.1
 requests
+spotdl
 spotipy
 tgcrypto
 
