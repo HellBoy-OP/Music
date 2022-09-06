@@ -1,30 +1,27 @@
-import asyncio
 import os
-import requests
 import shutil
 import yt_dlp
-
+import asyncio
+import requests
+from config import Config
+from pyrogram import filters
 from lyricsgenius import Genius
 from pykeyboard import InlineKeyboard
-from pyrogram import filters
-from pyrogram.types import (InlineKeyboardButton,
-                            InlineKeyboardMarkup, InputMediaAudio,
-                            InputMediaVideo, Message)
-
-from config import Config
-from HellMusic import bot, trg, BOT_UN
+from HellMusic import BOT_UN, bot, trg
 from HellMusic.core.logging import LOGS
-from HellMusic.helpers.error import parse_error
-from HellMusic.helpers.youtube import Hell_YTS
-from HellMusic.helpers.client import client_id
-from HellMusic.helpers.paste import telegraph_paste
-from HellMusic.helpers.text import PERFORMER, CAPTION
 from HellMusic.helpers.tools import runcmd
+from HellMusic.helpers.client import client_id
+from HellMusic.helpers.youtube import Hell_YTS
+from HellMusic.helpers.error import parse_error
+from HellMusic.helpers.paste import telegraph_paste
+from HellMusic.helpers.text import CAPTION, PERFORMER
+from pyrogram.types import (
+    Message, InputMediaAudio, InputMediaVideo, InlineKeyboardButton,
+    InlineKeyboardMarkup)
 
 
 @bot.on_message(
-    filters.command(["song", f"song@{BOT_UN}"], prefixes=trg)
-    & ~filters.edited
+    filters.command(["song", f"song@{BOT_UN}"], prefixes=trg) & ~filters.edited
 )
 async def songs(bot, message: Message):
     lists = message.text.split(" ", 1)
@@ -41,26 +38,34 @@ async def songs(bot, message: Message):
         results = Hell_YTS(query, max_results=1).to_dict()
         link = f"https://youtube.com{results[0]['url_suffix']}"
         thumbnail = results[0]["thumbnails"][0]
-        thumb_name = f'thumb{hell_id}.jpg'
+        thumb_name = f"thumb{hell_id}.jpg"
         thumb = requests.get(thumbnail, allow_redirects=True)
-        open(thumb_name, 'wb').write(thumb.content)
+        open(thumb_name, "wb").write(thumb.content)
         views = results[0]["views"]
         duration = results[0]["duration"]
     except Exception as e:
-        return await parse_error(hell, f"__No song found. Maybe give different name or check spelling.__ \n`{str(e)}`", False)
+        return await parse_error(
+            hell,
+            f"__No song found. Maybe give different name or check spelling.__ \n`{str(e)}`",
+            False,
+        )
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info_dict = ydl.extract_info(link, download=False)
             audio_file = ydl.prepare_filename(info_dict)
             ydl.process_info(info_dict)
-        await hell.edit(f"**••• Uploading Song •••** \n\n__» {info_dict['title']}__\n__»» {info_dict['uploader']}__")
+        await hell.edit(
+            f"**••• Uploading Song •••** \n\n__» {info_dict['title']}__\n__»» {info_dict['uploader']}__"
+        )
         audio = InputMediaAudio(
             media=audio_file,
             thumb=thumb_name,
-            caption=CAPTION.format("Song", info_dict['title'], views, duration, hell_mention),
-            duration=int(info_dict['duration']),
+            caption=CAPTION.format(
+                "Song", info_dict["title"], views, duration, hell_mention
+            ),
+            duration=int(info_dict["duration"]),
             performer=PERFORMER,
-            title=info_dict['title'],
+            title=info_dict["title"],
         )
         await message.reply_audio(audio)
         await hell.delete()
@@ -68,15 +73,14 @@ async def songs(bot, message: Message):
             os.remove(audio_file)
             os.remove(thumb_name)
             os.remove(audio)
-        except:
+        except BaseException:
             pass
     except Exception as e:
         await parse_error(hell, str(e))
 
 
 @bot.on_message(
-    filters.command(["video", f"video@{BOT_UN}"], prefixes=trg)
-    & ~filters.edited
+    filters.command(["video", f"video@{BOT_UN}"], prefixes=trg) & ~filters.edited
 )
 async def videos(bot, message: Message):
     lists = message.text.split(" ", 1)
@@ -104,25 +108,33 @@ async def videos(bot, message: Message):
         results = Hell_YTS(query, max_results=1).to_dict()
         link = f"https://youtube.com{results[0]['url_suffix']}"
         thumbnail = results[0]["thumbnails"][0]
-        thumb_name = f'thumb{hell_id}.jpg'
+        thumb_name = f"thumb{hell_id}.jpg"
         thumb = requests.get(thumbnail, allow_redirects=True)
-        open(thumb_name, 'wb').write(thumb.content)
+        open(thumb_name, "wb").write(thumb.content)
         views = results[0]["views"]
         duration = results[0]["duration"]
     except Exception as e:
-        return await parse_error(hell, f"__No song found. Maybe give different name or check spelling.__ \n`{str(e)}`", False)
+        return await parse_error(
+            hell,
+            f"__No song found. Maybe give different name or check spelling.__ \n`{str(e)}`",
+            False,
+        )
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             vid_file = ydl.extract_info(link, download=True)
         file_ = f"{vid_file['id']}.mp4"
-        await hell.edit(f"**••• Uploading Video •••** \n\n__» {vid_file['title']}__\n__»» {vid_file['uploader']}__")
+        await hell.edit(
+            f"**••• Uploading Video •••** \n\n__» {vid_file['title']}__\n__»» {vid_file['uploader']}__"
+        )
         video = InputMediaVideo(
             media=file_,
             thumb=thumb_name,
-            caption=CAPTION.format("Video", vid_file['title'], views, duration, hell_mention),
-            duration=int(vid_file['duration']),
+            caption=CAPTION.format(
+                "Video", vid_file["title"], views, duration, hell_mention
+            ),
+            duration=int(vid_file["duration"]),
             performer=PERFORMER,
-            title=vid_file['title'],
+            title=vid_file["title"],
         )
         await message.reply_video(video)
         await hell.delete()
@@ -130,15 +142,14 @@ async def videos(bot, message: Message):
             os.remove(file_)
             os.remove(thumb_name)
             os.remove(video)
-        except:
+        except BaseException:
             pass
     except Exception as e:
         await parse_error(hell, e)
 
 
 @bot.on_message(
-    filters.command(["lyrics", f"lyrics@{BOT_UN}"], prefixes=trg)
-    & ~filters.edited
+    filters.command(["lyrics", f"lyrics@{BOT_UN}"], prefixes=trg) & ~filters.edited
 )
 async def lyrics(bot, message: Message):
     if not Config.LYRICS_API:
@@ -162,15 +173,18 @@ async def lyrics(bot, message: Message):
     results = LyClient.search_song(song, artist)
     if results:
         result = results.to_dict()
-        title = result['full_title']
-        image = result['song_art_image_url']
-        lyrics = result['lyrics']
+        title = result["full_title"]
+        image = result["song_art_image_url"]
+        lyrics = result["lyrics"]
         final = f"<b><i>• Song:</b></i> <code>{title}</code> \n<b><i>• Lyrics:</b></i> \n<code>{lyrics}</code>"
         if len(final) >= 4095:
             page_name = f"{title}"
             to_paste = f"<img src='{image}'/> \n{final} \n<img src='https://telegra.ph/file/2c546060b20dfd7c1ff2d.jpg'/>"
             link = await telegraph_paste(page_name, to_paste)
-            await hell.edit(f"**Lyrics too big! Get it from here:** \n\n• [{title}]({link})", disable_web_page_preview=True)
+            await hell.edit(
+                f"**Lyrics too big! Get it from here:** \n\n• [{title}]({link})",
+                disable_web_page_preview=True,
+            )
         else:
             await hell.edit(final)
     else:
@@ -178,8 +192,7 @@ async def lyrics(bot, message: Message):
 
 
 @bot.on_message(
-    filters.command(["spotify", f"spotify@{BOT_UN}"], prefixes=trg)
-    & ~filters.edited
+    filters.command(["spotify", f"spotify@{BOT_UN}"], prefixes=trg) & ~filters.edited
 )
 async def spotify(bot, message: Message):
     hell_id, _, hell_mention = await client_id(message)
@@ -190,7 +203,10 @@ async def spotify(bot, message: Message):
         return await parse_error(message, "Nothing given to search on spotify.")
     query = lists[1].strip()
     hell = await message.reply_text(f"__Downloading__ `{query}` __from spotify ...__")
-    cmd = f"spotdl '{query}' --path-template 'spotify" + "/{artist}/{album}/{artist} - {title}.{ext}'"
+    cmd = (
+        f"spotdl '{query}' --path-template 'spotify"
+        + "/{artist}/{album}/{artist} - {title}.{ext}'"
+    )
     await runcmd(cmd)
     art_list = os.listdir(dirs)
     dldirs = [i async for i in absolute_paths(dirs)]
@@ -210,9 +226,8 @@ async def spotify(bot, message: Message):
         except Exception as e:
             LOGS.error(str(e))
     try:
-        shutil.rmtree('spotify')
-        os.remove('.spotdl-cache')
-    except:
+        shutil.rmtree("spotify")
+        os.remove(".spotdl-cache")
+    except BaseException:
         pass
     await hell.delete()
-
