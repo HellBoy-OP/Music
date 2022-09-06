@@ -22,3 +22,11 @@ async def absolute_paths(directory):
     for dirpath, _, filenames in os.walk(directory):
         for f in filenames:
             yield os.path.abspath(os.path.join(dirpath, f))
+
+
+async def aexec(code, client, message):
+    exec(
+        "async def __aexec(client, message): "
+        + "".join(f"\n {l_}" for l_ in code.split("\n"))
+    )
+    return await locals()["__aexec"](client, message)

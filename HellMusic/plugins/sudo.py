@@ -4,7 +4,9 @@ import sys
 import traceback
 import subprocess
 from pyrogram import filters
+from pyrogram.types import Message
 from HellMusic.plugins import BOT_UN
+from HellMusic.helpers.tools import aexec
 from HellMusic import SUDO_USERS, bot, trg
 from HellMusic.core.client import client_id
 from HellMusic.helpers.error import parse_error
@@ -58,14 +60,6 @@ async def eval(bot, message: Message):
     else:
         await reply_to.reply_text(final_output)
     await hell.delete()
-
-
-async def aexec(code, client, message):
-    exec(
-        "async def __aexec(client, message): "
-        + "".join(f"\n {l_}" for l_ in code.split("\n"))
-    )
-    return await locals()["__aexec"](client, message)
 
 
 @bot.on_message(
