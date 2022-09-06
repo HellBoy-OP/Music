@@ -2,9 +2,10 @@ from config import Config
 
 
 DEVS = [
-    1432756163,   # ForGo10God
-    1874070588,   # ForGo10_God
+    1432756163,  # ForGo10God
+    1874070588,  # ForGo10_God
 ]
+
 
 def sudo_users():
     users = []
