@@ -46,6 +46,11 @@
         "description": "A mongodb url.",
         "value": "",
         "required": false
+      },
+      "SUDO_USERS": {
+        "description": "Userid of users you want to give sudo access. Separate each id with a space.",
+        "value": "",
+        "required": false
       }
     },
     "buildpacks": [{
