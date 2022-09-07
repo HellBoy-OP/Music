@@ -8,6 +8,6 @@ NEW_PLAY = ""
 
 PERFORMER = "[ †hê Hêllẞø† ]"
 
-START_GC = ""
+START_GC = "Alive & working!"
 
-START_PM = ""
+START_PM = "Alive"
