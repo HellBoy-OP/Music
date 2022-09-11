@@ -1,6 +1,8 @@
 from HellMusic import SUDO_USERS
 
+
 on_mode = ["on", "yes", "enable", "true"]
+
 
 async def check_mode(message):
     mode = Config.PRIVATE_MODE
