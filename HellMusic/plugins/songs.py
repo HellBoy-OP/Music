@@ -12,12 +12,12 @@ from pykeyboard import InlineKeyboard
 from HellMusic.core.logging import LOGS
 from HellMusic.core.client import client_id
 from HellMusic.helpers.youtube import Hell_YTS
+from HellMusic.helpers.checks import check_mode
 from HellMusic.helpers.error import parse_error
 from HellMusic.helpers.paste import telegraph_paste
 from HellMusic.helpers.text import CAPTION, PERFORMER
 from HellMusic.helpers.tools import runcmd, absolute_paths
 from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
-from HellMusic.helpers.checks import check_mode
 
 
 @bot.on_message(
