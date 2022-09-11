@@ -17,6 +17,7 @@ from HellMusic.helpers.paste import telegraph_paste
 from HellMusic.helpers.text import CAPTION, PERFORMER
 from HellMusic.helpers.tools import runcmd, absolute_paths
 from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
+from HellMusic.helpers.checks import check_mode
 
 
 @bot.on_message(
@@ -24,6 +25,9 @@ from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
 )
 async def songs(bot, message: Message):
     hell = await message.reply_text("Processing ...")
+    mode = await check_mode(message)
+    if mode == 0:
+        return await hell.edit("You don't have access to use me.")
     lists = message.text.split(" ", 1)
     if len(lists) != 2:
         return await parse_error(hell, "Nothing given to search.")
@@ -82,6 +86,9 @@ async def songs(bot, message: Message):
 )
 async def videos(bot, message: Message):
     hell = await message.reply_text("Processing ...")
+    mode = await check_mode(message)
+    if mode == 0:
+        return await hell.edit("You don't have access to use me.")
     lists = message.text.split(" ", 1)
     if len(lists) != 2:
         return await parse_error(hell, "Nothing given to search.")
@@ -148,6 +155,9 @@ async def videos(bot, message: Message):
 )
 async def lyrics(bot, message: Message):
     hell = await message.reply_text("Processing ...")
+    mode = await check_mode(message)
+    if mode == 0:
+        return await hell.edit("You don't have access to use me.")
     if not Config.LYRICS_API:
         return await parse_error(hell, "`LYRICS_API` is not configured!", False)
     lists = message.text.split(" ", 1)
@@ -196,6 +206,9 @@ async def lyrics(bot, message: Message):
 )
 async def spotify(bot, message: Message):
     hell = await message.reply_text("Processing ...")
+    mode = await check_mode(message)
+    if mode == 0:
+        return await hell.edit("You don't have access to use me.")
     hell_id, _, hell_mention = await client_id(message)
     reply = message.reply_to_message
     dirs = "./spotify/"
