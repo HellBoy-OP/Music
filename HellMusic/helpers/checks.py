@@ -1,5 +1,5 @@
 from HellMusic import SUDO_USERS
-
+from config import Config 
 
 on_mode = ["on", "yes", "enable", "true"]
 
